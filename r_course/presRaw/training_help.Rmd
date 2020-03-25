@@ -1,7 +1,7 @@
 ---
-title: "Getting tidy <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>"
+title: "Getting started <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>"
 author: "Rockefeller University, Bioinformatics Resource Centre"
-date: "http://rockefelleruniversity.github.io/Intro_To_R_1Day/"
+date: "http://rockefelleruniversity.github.io/Getting_Started/"
 output: 
   xaringan::moon_reader:
     css: ["default", "metropolisCustom.css", "metropolis-fontsCustom.css"]
@@ -29,6 +29,50 @@ AsSlides <- TRUE
 ---
 # Getting Started
 
+This series of courses is a practical guide to coding for biologists. The empahasis is on developing the skills to work with genomic data. 
+
+The courses introduce the scripting language R, before covering the basics of biological Data and how to process it. 
+
+Each course can be used independnelty, but the logic and skills build from one to the other. So if you are new to this we advise you start at the beginning.
+
+## Course Order
+1. Intro To R
+2. Plotting In R
+3. Genomic Data
+5. IGV
+6. Introduction to Bioconductor
+7. ChIPseq
+8. ATACseq
+9. RNAseq
+10. Genomic Variants
+11. Vizualising genomics data in R and Bioconductor
+
+## Course make up
+
+The course is presented as both presentations and single-pages (HTML) and the R code. Exercises and answer sheets are included after all subsections to practice techniques and provide future reference examples.
+
+## Setting up
+Before starting it is essential that you install R. We also recommend installing RStudio. This a integrated development environment, with an easy to use graphic interface that makes R much more palatable. 
+
+### Install R.
+R can be installed from the R-project website.
+R 3.6.0 or higher is recomended for this course.
+
+http://www.r-project.org/
+
+### Install RStudio.
+RStudio can be installed from the R-project website.
+
+http://www.rstudio.com/
+
+### Install required packages.
+
+First launch RStudio
+Install the packages in the R console using install.packages
+install.packages("ggplot2",dependencies=TRUE)
+install.packages("rmarkdown",dependencies=TRUE)
+install.packages("yaml",dependencies=TRUE)
+
 --- 
 # How to communicate with us
 Sometimes you may need a hand with the training or you may notice a bug/mistake.
@@ -40,7 +84,6 @@ Best practise for reaching out to us is through GitHub, as this is where we host
 You can. But we discourage this. The reason is that a lot of people will have the same question. By posting the issue on GitHub, it allows us to reply publically. This means future users with the same question will not have to wait for us to respond. 
 
 That said you can get our contact information here to reach out to us directly: https://rockefelleruniversity.github.io/
-
 
 ---
 ## What is GitHub?
