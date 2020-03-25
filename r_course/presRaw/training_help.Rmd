@@ -1,0 +1,95 @@
+---
+title: "Getting tidy <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>"
+author: "Rockefeller University, Bioinformatics Resource Centre"
+date: "http://rockefelleruniversity.github.io/Intro_To_R_1Day/"
+output: 
+  xaringan::moon_reader:
+    css: ["default", "metropolisCustom.css", "metropolis-fontsCustom.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+  html_document:
+    toc: true # table of contents true
+    toc_float: yes
+    depth: 3  # upto three depths of headings (specified by #, ## and ###)
+    number_sections: false  ## if you want number sections at each table header
+    theme: united  # many options for theme, this one is my favorite.
+    highlight: tango  # specifies the syntax highlighting style
+params:
+  isSlides: "no"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+AsSlides <- TRUE
+```
+
+---
+# Getting Started
+
+--- 
+# How to communicate with us
+Sometimes you may need a hand with the training or you may notice a bug/mistake.
+
+Best practise for reaching out to us is through GitHub, as this is where we host all our courses. 
+
+---
+## Why can't I just email you?
+You can. But we discourage this. The reason is that a lot of people will have the same question. By posting the issue on GitHub, it allows us to reply publically. This means future users with the same question will not have to wait for us to respond. 
+
+That said you can get our contact information here to reach out to us directly: https://rockefelleruniversity.github.io/
+
+
+---
+## What is GitHub?
+
+GitHub is an essential tool for anyone interested in programming. It allows easy sharing and collaboration whilst also promoting good coding practises through version control.
+
+We will be addressing how to use GitHub fully soon with a workshop.
+
+Here we will show specifically what you need to do to raise an issue. 
+
+---
+### Make a GitHub account
+
+* Go to [github](https://github.com/)
+* Sign up for an account (you can also apply for a pro account if you are affiliated with an educational institute)
+
+---
+### Visit our repositories
+
+* All our courses can be found at [RU](https://github.com/RockefellerUniversity)
+* Each course is in its own repository (these are just collections of code for a single project).
+* Find the course repository for which you need help, or found a bug. Several courses are pinned to the top. You can either scroll down to find the relevant repository or use the search bar if it isn't pinned. 
+
+
+### Check open issues
+
+* Once in the repository click the Issue tab. 
+* Any open issues will be displayed. Open means we are working on fixing them at the moment.
+* Click the closed issue. Check through the previous issues to see if any are relevant to your question.
+* If there are a lot of issues the search bar can be used. Searching forgiving like google, so you will need an exact match to something in the closed issue.
+
+### Create a new issue
+
+* If there are no previous relationships realted to your question/bug then create a new one by pressing the green "New Issue" button.
+* Give the Issue a title and describe the question/bug. Be as clear and concise as possible. If you can slide numbers or section titles that will help. You can also add images like screenshots with simple drag and drop. 
+
+### Bug fixes
+
+* For those familiar with the GitHub ecosystem that run into an error we encourage users to make their own corrections. 
+* This can be for errors as simple as Typos or larger problems such as bugs in the code itself
+* Once you have created the issue, just fork the repository, make edits, create a pull request and we will review your changes before merging them.
+
+
+
+
+
+
+![imagename](./imgs/my_image.png)
+
+
+
+
