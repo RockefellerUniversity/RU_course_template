@@ -1,10 +1,10 @@
 # Teaching at RU
-A template repository from which to build workshops and other teaching materials in a standard manner to allow integration with other RU material. 
+A template repository from which to build workshops and other teaching materials in a standard manner to allow integration with other RU material. An example can be found [here](https://rockefelleruniversity.github.io/RU_RNAseq/)
 
 
 ## How to use this template
 
-* Use this as a template. Just click on the *Use this template* button on the top right of the repository to get started and set up your own course repository.   
+* Use this as a template. Just click on the *'Use this template'* button on the top right of the repository to get started and set up your own course repository.   
 
 * All the course content will be contained in the package (currently titled "MyCoursePackage"). This structure is important as we will use this, along with the GitHub actions to automatically compile your course.  
 
@@ -13,6 +13,8 @@ A template repository from which to build workshops and other teaching materials
 * Another thing to look out for is links. You will need to update any paths that point into the package to reflect the packages name.
 
 * If there are mistakes, or areas of the template you think are not as clear as they could be please take a fork, and submit a pull request with suggested updates so we can improve it. Alternatively raise an issue.
+
+* To see how the course template is compiled visit the [web page](https://rockefelleruniversity.github.io/RU_course_template/). Alternatively look at other [compiled courses](https://rockefelleruniversity.github.io/RU_RNAseq/) and their [Rmd files](https://github.com/RockefellerUniversity/RU_RNAseq/tree/master/rnaseq/inst/extdata/presRaw) on GitHub. 
 
 
 ## Course Content
