@@ -1,6 +1,21 @@
 # Teaching at RU
 A template repository from which to build workshops and other teaching materials in a standard manner to allow integration with other RU material. 
 
+data/image insetion examples in ex and main site
+what if reqs arent in list?
+
+
+The pacakge
+rename both folde and Rproj
+DESCRIPTION file
+exercises (inst/doc)
+extdata 
+course.yml
+Descriptions
+2 types:  CourseOverview.Rmd
+          Session1Overview.Rmd
+
+
 ## Structure
 These are the main files and directories you will need. There will often be others as well you can add that are self explanatroy: notes, scripts, outputs.....
 
