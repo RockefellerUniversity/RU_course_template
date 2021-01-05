@@ -41,7 +41,7 @@ if(params$isSlides == "yes"){
 
 
 ## ----setwd_introtoR,eval=F----------------------------------------------------
-## setwd("/PathToMyDownload/RU_Course_help/r_course")
+## setwd("/PathToMyDownload/RU_Course_template/r_course")
 ## # e.g. setwd("~/Downloads/Intro_To_R_1Day/r_course")
 
 
