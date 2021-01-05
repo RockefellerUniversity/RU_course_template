@@ -429,12 +429,15 @@ summary {
 <div id="teaching-at-ru" class="section level1">
 <h1>Teaching at RU</h1>
 <p>A template repository from which to build workshops and other teaching materials in a standard manner to allow integration with other RU material.</p>
-<div id="how-to-use" class="section level2">
-<h2>How to use</h2>
-<p>Use this as a template. Take a fork and work from there.</p>
-<p>All the course content is contained in the package. This structure is important as we will use this, along with the GitHub actions to automatically compile your course.</p>
-<p>You will need to first rename the package and the associated R project. From there you can add in the appropriate files for the course content, and update the config files. There are placeholders along with examples and formatting guides for most files. Anything surrounded by double question marks [??] is text to help, but should be replaced.</p>
-<p>Another thing to look out for is links. You will need tp update any paths that point into the package to reflect the packages name.</p>
+<div id="how-to-use-this-template" class="section level2">
+<h2>How to use this template</h2>
+<ul>
+<li><p>Use this as a template. Just click on the <em>Use this template</em> button on the top right of the repository to get started and set up your own course repository.</p></li>
+<li><p>All the course content will be contained in the package (currently titled “MyCoursePackage”). This structure is important as we will use this, along with the GitHub actions to automatically compile your course.</p></li>
+<li><p>You will need to first rename the package and the associated R project. From there you can add in the appropriate files for the course content, and update the config files. There are placeholders along with examples and formatting guides for most files. Anything surrounded by double question marks [??] is text to help, but should be replaced.</p></li>
+<li><p>Another thing to look out for is links. You will need to update any paths that point into the package to reflect the packages name.</p></li>
+<li><p>If there are mistakes, or areas of the template you think are not as clear as they could be please take a fork, and submit a pull request with suggested updates so we can improve it. Alternatively raise an issue.</p></li>
+</ul>
 </div>
 <div id="course-content" class="section level2">
 <h2>Course Content</h2>
@@ -469,13 +472,22 @@ These files contain descriptive text, from which the cover page for the course i
 <div id="course.yml" class="section level4">
 <h4>course.yml</h4>
 <p>Find this at *MyCoursePackage/inst/doc/_course.yml*<br />
-This yml will contain the name for all the Rmd files. You will need to update the CourseName. If any of the Rmds have a different name to the template, update the .yml to reflect that. The order is important so the RMd for your first section should be first. Each Rmd should be separated by a space. Except for exercises. Exercises should be in the order they appear. Exercises in the same section will be comma separated. There will then be a space between sections i.e. in the template the first 2 exercises are associated with the first session, while the 3rd exercise is associated with the final session.</p>
+This yml will contain the name for all the Rmd files. You will first need to update the CourseName. If any of the Rmds have a different name to the template, update the .yml to reflect that. The order is important so the RMd for your first section should be first.<br />
+Each Rmd should be separated by a space. Except for exercises. Exercises should be in the order they appear. Exercises in the same section will be comma separated. There will then be a space between sections i.e. in the template the first 2 exercises are associated with the first session, while the 3rd exercise is associated with the final session.</p>
 </div>
 </div>
 <div id="github-files-for-compiling" class="section level2">
 <h2>.github files for compiling</h2>
-<p>The workflows for compilation are contained in the .github directory on the top level. These contain the github actions required to recognize updates to the repository, then recompile the content. Along with runnning basic checks of the R code.</p>
-<p>There are two. You will have to replace the package name in this scripts. There may be further customization needed, but this is on a case by case basis to get compilation running. Most standard courses will work though.</p>
+<p>The workflows for compilation are contained in the .github directory on the top level. These contain the github actions required to recognize updates to the repository, then recompile the content. Along with running basic checks of the R code.</p>
+<p>There are two. You will have to replace the package name in these scripts. There may be further customization needed, but this is on a case by case basis to get compilation running. Most standard courses will work though.</p>
+</div>
+<div id="finished" class="section level2">
+<h2>Finished?</h2>
+<p>Once you have finished let us know and we will take a fork onto the Rockefeller GitHub. We can then start the process of getting it compiling and help review the course content.</p>
+</div>
+<div id="help" class="section level2">
+<h2>Help</h2>
+<p>If you need help contact the BRC [<a href="mailto:brc@rockefeller.edu" class="email">brc@rockefeller.edu</a>], or raise an issue.</p>
 </div>
 </div>
 
