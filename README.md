@@ -46,3 +46,7 @@ Each Rmd should be separated by a space. Except for exercises. Exercises should 
 
 
 ## .github files for compiling
+The workflows for compilation are contained in the .github directory on the top level. These contain the github actions required to recognize updates to the repository, then recompile the content. Along with runnning basic checks of the R code. 
+
+There are two. You will have to replace the package name in this scripts. There may be further customization needed, but this is on a case by case basis to get compilation running. Most standard courses will work though. 
+
