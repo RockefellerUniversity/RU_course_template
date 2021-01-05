@@ -1,7 +1,7 @@
 ---
 title: "My Exercise 2"
 author: "Rockefeller University, Bioinformatics Resource Centre"
-date: "https://rockefelleruniversity.github.io/RU_course_help/"
+date: "https://rockefelleruniversity.github.io/RU_course_template/"
 output: 
   html_document:
     number_sections: false  ## if you want number sections at each table header
@@ -18,7 +18,7 @@ message(toMessage)
 
 
 <p>&nbsp;</p>
-These exercises are about ??Add a summary of the topic?? [??Topic Name??](https://rockefelleruniversity.github.io/RU_course_help/). 
+These exercises are about ??Add a summary of the topic?? [??Topic Name??](https://rockefelleruniversity.github.io/RU_course_template/). 
 
 **Exercise 1** - **??Ex 1 title if it has one??**
 
