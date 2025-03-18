@@ -6,7 +6,7 @@ suppressPackageStartupMessages(require(knitr))
 knitr::opts_chunk$set(echo = TRUE, tidy = T)
 
 
-## ---- results='asis',include=TRUE,echo=FALSE----------------------------------
+## ----results='asis',include=TRUE,echo=FALSE-----------------------------------
 if(params$isSlides != "yes"){
   cat("# ???My Course name (session1)???
 
@@ -18,7 +18,7 @@ if(params$isSlides != "yes"){
 
 
 
-## ---- results='asis',include=TRUE,echo=FALSE----------------------------------
+## ----results='asis',include=TRUE,echo=FALSE-----------------------------------
 if(params$isSlides == "yes"){
   cat("class: inverse, center, middle
 
@@ -41,11 +41,11 @@ if(params$isSlides == "yes"){
 
 
 ## ----setwd_introtoR,eval=F----------------------------------------------------
-## setwd("/PathToMyDownload/RU_Course_template/r_course")
-## # e.g. setwd("~/Downloads/Intro_To_R_1Day/r_course")
+# setwd("/PathToMyDownload/RU_Course_template/r_course")
+# # e.g. setwd("~/Downloads/Intro_To_R_1Day/r_course")
 
 
-## ---- results='asis',include=TRUE,echo=FALSE----------------------------------
+## ----results='asis',include=TRUE,echo=FALSE-----------------------------------
 if(params$isSlides == "yes"){
   cat("class: inverse, center, middle
 
@@ -73,9 +73,9 @@ Table <- read.table("data/readThisTable.csv",sep=",",header=T)
 
 
 ## ----echo=T, eval=F-----------------------------------------------------------
-## #Intense computation
-## myresult<-10^6 +1
-## 
+# #Intense computation
+# myresult<-10^6 +1
+# 
 
 
 ## ----echo=F, eval=T-----------------------------------------------------------
