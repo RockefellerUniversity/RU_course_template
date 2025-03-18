@@ -84,6 +84,8 @@ Or can be downloaded as a zip archive from here.
 
 * [Download zip](https://github.com/rockefelleruniversity/Intro_To_R_1Day/zipball/master)
 
+
+
 ---
 ## Course materials
 
@@ -101,6 +103,7 @@ R code in presentations.
 Practicals as HTML pages. 
 * **r_course/answers/**
 Practicals with answers as HTML pages and R code solutions. 
+
 
 
 ---
