@@ -18,7 +18,7 @@ a, a > code {
 
 .inverse h1 {
   color: #272822;
-  font-size: calc(80px - 2vw);
+  font-size: calc(65px - 2vw);
 }
 
 .inverse h2, .inverse h3 {
