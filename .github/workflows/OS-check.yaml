@@ -111,9 +111,6 @@ jobs:
           remotes::install_deps("MyCoursePackage/",dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
           remotes::install_cran("BiocManager", force = TRUE)
-          BiocManager::install("rmarkdown")
-          BiocManager::install("devtools")
-          BiocManager::install("RockefellerUniversity/compileCourses",subdir="compileCourses")  
         shell: Rscript {0}
         
       - name: Install dependencies 2
@@ -127,9 +124,6 @@ jobs:
       - name: Install dependencies 3
         if: matrix.config.r != 'devel'
         run: |
-          remotes::install_deps("MyCoursePackage/",dependencies = TRUE)
-          remotes::install_cran("rcmdcheck")
-          remotes::install_cran("BiocManager", force = TRUE)
           BiocManager::install("rmarkdown")
           BiocManager::install("devtools")
           BiocManager::install("RockefellerUniversity/compileCourses",subdir="compileCourses")  
