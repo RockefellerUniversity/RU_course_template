@@ -1,15 +1,18 @@
 ---
-title: "My Course Template, Session 1 <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>"
-author: "Rockefeller University, Bioinformatics Resource Centre"
-date: "http://rockefelleruniversity.github.io/RU_course_template/"
+title: "My Course Template, Session 1"
+subtitle: " <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html> Bioinformatics Resource Center - Rockefeller University"
+author: 
+  - "http://rockefelleruniversity.github.io/RU_course_template/"
+  - "brc@rockefeller.edu"
 output: 
   xaringan::moon_reader:
-    css: ["default", "metropolisCustom.css", "metropolis-fontsCustom.css"]
+    css: ["default.css", "metropolisCustom.css", "metropolis-fontsCustom.css"]
     lib_dir: libs
     nature:
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
+      titleSlideClass: [middle, inverse]
   html_document:
     toc: true # table of content true
     toc_float: yes
