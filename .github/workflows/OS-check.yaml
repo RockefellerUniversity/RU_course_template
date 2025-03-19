@@ -116,6 +116,7 @@ jobs:
       - name: Install dependencies 2
         if: matrix.config.r == 'devel'
         run: |
+          BiocManager::install(version = "devel", ask=F)
           BiocManager::install("rmarkdown", version = "devel")
           BiocManager::install("devtools", version = "devel")
           BiocManager::install("RockefellerUniversity/compileCourses",subdir="compileCourses", version = "devel")
@@ -139,7 +140,7 @@ jobs:
       - name: Install package
         if: github.ref == 'refs/heads/master' 
         run: |
-          devtools::install("MyCoursePackage/",dependencies = TRUE,quick = TRUE)
+          devtools::install("MyCoursePackage/",dependencies = TRUE, quick = TRUE)
         shell: Rscript {0}
 
       - name: CompileCourse
