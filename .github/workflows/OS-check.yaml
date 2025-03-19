@@ -79,7 +79,7 @@ jobs:
       - name: Install Linux system dependencies
         if: runner.os == 'Linux'
         run: |
-          sysreqs=$(Rscript -e 'cat("apt-get update -y && apt-get install -y", paste(gsub("apt-get install -y ", "", remotes::system_requirements("ubuntu", "20.04")), collapse = " "))')
+          sysreqs=$(Rscript -e 'cat("apt-get update -y && apt-get install -y", paste(gsub("apt-get install -y ", "", remotes::system_requirements("ubuntu-22.04", package=unlist(strsplit(test[,"Depends"],", |\n")))), collapse = " "))')
           echo $sysreqs
           sudo -s eval "$sysreqs"
 
@@ -106,7 +106,7 @@ jobs:
           ## Edit below if you have any Windows system dependencies
         shell: Rscript {0}
 
-      - name: Install dependencies
+      - name: Install dependencies 1
         run: |
           remotes::install_deps("MyCoursePackage/",dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
@@ -115,7 +115,26 @@ jobs:
           BiocManager::install("devtools")
           BiocManager::install("RockefellerUniversity/compileCourses",subdir="compileCourses")  
         shell: Rscript {0}
-
+        
+      - name: Install dependencies 2
+        if: matrix.config.r == 'devel'
+        run: |
+          BiocManager::install("rmarkdown", version = "devel")
+          BiocManager::install("devtools", version = "devel")
+          BiocManager::install("RockefellerUniversity/compileCourses",subdir="compileCourses", version = "devel")
+        shell: Rscript {0}
+        
+      - name: Install dependencies 3
+        if: matrix.config.r != 'devel'
+        run: |
+          remotes::install_deps("MyCoursePackage/",dependencies = TRUE)
+          remotes::install_cran("rcmdcheck")
+          remotes::install_cran("BiocManager", force = TRUE)
+          BiocManager::install("rmarkdown")
+          BiocManager::install("devtools")
+          BiocManager::install("RockefellerUniversity/compileCourses",subdir="compileCourses")  
+        shell: Rscript {0}
+        
       - name: Session info
         run: |
           options(width = 100)
