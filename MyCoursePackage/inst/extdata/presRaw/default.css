@@ -21,9 +21,14 @@ a, a > code {
   font-size: calc(65px - 2vw);
 }
 
-.inverse h2, .inverse h3 {
+.inverse h2 {
   color: #272822;
   font-size: calc(50px - 2vw);
+}
+
+.inverse h3 {
+  color: #272822;
+  font-size: calc(30px - 2vw);
 }
 
 /* Two-column layout */
