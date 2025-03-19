@@ -4,11 +4,11 @@
 ### Course Integrity
 **This course is compiled automatically on _`r Sys.Date()`_ **
 <br>
-[<img src="https://github.com/RockefellerUniversity/RU_Course_template/workflows/R-CMD-check-bioc/badge.svg">](https://github.com/RockefellerUniversity/RU_Course_template/actions?query=workflow%3AR-CMD-check-bioc)
+[![Compilation Check](https://github.com/RockefellerUniversity/RU_course_template/actions/workflows/compilation-check.yml/badge.svg)](https://github.com/RockefellerUniversity/RU_course_template/actions/workflows/compilation-check.yml)
 
-**The course is tested and available on MacOS, Windows and Ubuntu Linux for R 4.0**
+**The course is tested and available on MacOS, Windows and Ubuntu Linux for `r R.Version()$version.string`**
 <br>
-[<img src="https://github.com/RockefellerUniversity/RU_Course_template/workflows/R-CMD-check/badge.svg">](https://github.com/RockefellerUniversity/RU_Course_template/actions?query=workflow%3AR-CMD-check)
+[![OS Check](https://github.com/RockefellerUniversity/RU_course_template/actions/workflows/OS-check.yaml/badge.svg)](https://github.com/RockefellerUniversity/RU_course_template/actions/workflows/OS-check.yaml)
 
 <br>
 <br>
