@@ -82,6 +82,7 @@ jobs:
           sysreqs=$(Rscript -e 'cat("apt-get update -y && apt-get install -y", paste(gsub("apt-get install -y ", "", remotes::system_requirements("ubuntu-22.04", package=unlist(strsplit(read.dcf("MyCoursePackage/DESCRIPTION")[,"Depends"],", |\n")))), collapse = " "))')
           echo $sysreqs
           sudo -s eval "$sysreqs"
+          sudo apt -y install libfontconfig1-dev
 
       - name: Install macOS system dependencies
         if: matrix.config.os == 'macOS-latest'
