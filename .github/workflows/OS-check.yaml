@@ -83,6 +83,8 @@ jobs:
           echo $sysreqs
           sudo -s eval "$sysreqs"
           sudo apt -y install libfontconfig1-dev
+          sudo apt-get install libharfbuzz-dev libfribidi-dev
+          sudo apt-get install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
 
       - name: Install macOS system dependencies
         if: matrix.config.os == 'macOS-latest'
