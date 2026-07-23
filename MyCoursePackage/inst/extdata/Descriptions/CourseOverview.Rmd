@@ -12,6 +12,11 @@
 <br>
 [![OS-check](https://github.com/RockefellerUniversity/RU_course_template/actions/workflows/OS-check.yaml/badge.svg)](https://github.com/RockefellerUniversity/RU_course_template/actions/workflows/OS-check.yaml)
 
+
+**The course is also tested against every major R release since 3.5 (3.5 &rarr; 4.5) on Linux**
+<br>
+[![legacy-R-check](https://github.com/RockefellerUniversity/RU_course_template/actions/workflows/legacy-R-check.yaml/badge.svg)](https://github.com/RockefellerUniversity/RU_course_template/actions/workflows/legacy-R-check.yaml)
+
 <br>
 <br>
 
