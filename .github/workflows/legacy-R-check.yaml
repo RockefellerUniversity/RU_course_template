@@ -1,0 +1,123 @@
+## Attempts to compile the course on every major R release since 3.5.
+## Linux only. Each R version is paired with a Posit Public Package Manager
+## (PPM) dated snapshot so that R-version-appropriate CRAN package versions are
+## installed - current package versions will not install on old R.
+##
+## This is a best-effort compatibility probe: the oldest legs may fail to
+## resolve every dependency. fail-fast is disabled so each R version is reported
+## independently and the badge documents the compatibility floor.
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  schedule:
+    - cron: "1 7 11 * *"
+
+name: legacy-R-check
+
+env:
+  cache-version: 'legacy-cache-v1'
+
+jobs:
+  legacy-R-check:
+    ## Pin the distro so the PPM binary path (jammy) matches the runner.
+    runs-on: ubuntu-22.04
+    ## Bound each R leg so a hung/OOM render cannot run to the 6-hour cap.
+    timeout-minutes: 120
+
+    name: R ${{ matrix.config.r }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          ## snapshot = PPM date roughly contemporary with each R release,
+          ## chosen so CRAN package versions are compatible with that R.
+          - { r: '3.5', snapshot: '2019-01-02' }
+          - { r: '3.6', snapshot: '2020-04-24' }
+          - { r: '4.0', snapshot: '2021-03-31' }
+          - { r: '4.1', snapshot: '2022-04-21' }
+          - { r: '4.2', snapshot: '2023-04-20' }
+          - { r: '4.3', snapshot: '2024-04-23' }
+          - { r: '4.4', snapshot: '2025-04-10' }
+          - { r: '4.5', snapshot: 'latest' }
+
+    env:
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      GITHUB_TOKEN: ${{ secrets.GHTOKEN2 }}
+      GITHUB_PAT: ${{ secrets.GHTOKEN2 }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup R ${{ matrix.config.r }}
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+
+      - name: Setup pandoc
+        uses: r-lib/actions/setup-pandoc@v2
+
+      - name: Point CRAN at the version-matched PPM snapshot
+        run: |
+          repo <- "https://packagemanager.posit.co/cran/__linux__/jammy/${{ matrix.config.snapshot }}"
+          cat(sprintf("options(repos = c(CRAN = '%s'))\n", repo),
+              file = "~/.Rprofile", append = TRUE)
+          cat("Using CRAN snapshot:", repo, "\n")
+        shell: Rscript {0}
+
+      - name: Query dependencies
+        run: |
+          install.packages('remotes')
+          saveRDS(remotes::dev_package_deps("MyCoursePackage/",dependencies = TRUE), ".github/depends.Rds", version = 2)
+          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
+        shell: Rscript {0}
+
+      - name: Cache R packages
+        if: "!contains(github.event.head_commit.message, '/nocache')"
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ env.cache-version }}-${{ runner.os }}-R${{ matrix.config.r }}-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ env.cache-version }}-${{ runner.os }}-R${{ matrix.config.r }}-
+
+      - name: Install Linux system dependencies
+        run: |
+          sysreqs=$(Rscript -e 'cat("apt-get update -y && apt-get install -y", paste(gsub("apt-get install -y ", "", remotes::system_requirements("ubuntu-22.04", package=unlist(strsplit(read.dcf("MyCoursePackage/DESCRIPTION")[,"Depends"],", |\n")))), collapse = " "))')
+          echo $sysreqs
+          sudo -s eval "$sysreqs"
+          sudo apt -y install libfontconfig1-dev
+          sudo apt-get install -y libharfbuzz-dev libfribidi-dev
+          sudo apt-get install -y libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
+
+      ## Install the course dependencies from the version-matched snapshot set
+      ## above. On the oldest R legs some current packages may not resolve -
+      ## that is expected and is what this probe documents.
+      - name: Install dependencies
+        run: |
+          remotes::install_deps("MyCoursePackage/",dependencies = TRUE)
+          remotes::install_cran("BiocManager")
+          BiocManager::install("devtools")
+        shell: Rscript {0}
+
+      ## Install the compileCourses engine, install the local package and
+      ## render the course. Shared with compilation-check and OS-check.
+      - name: Compile course
+        uses: ./.github/actions/compile-course
+        with:
+          repo: RockefellerUniversity
+          subdir: MyCoursePackage
+          branch: master
+          compilecourses-ref: cleanup-pre-quarto   # TEMP: test branch engine; revert before merge
+          install-local-method: devtools
+
+      - name: Upload check results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: legacy-R-${{ matrix.config.r }}-results
+          path: check

@@ -1,41 +1,70 @@
 # Teaching at RU
-A template repository from which to build workshops and other teaching materials in a standard manner to allow integration with other RU material. 
-
-## Structure
-These are the main files and directories you will need. There will often be others as well you can add that are self explanatroy: notes, scripts, outputs.....
+A template repository from which to build workshops and other teaching materials in a standard manner to allow integration with other RU material. An example can be found [here](https://rockefelleruniversity.github.io/RU_RNAseq/)
 
 
-### Index
-This is the web homepage for the specific course. This will link to the BRC RU hub, along with all the information that is needed to prepare for the course. 
+## How to use this template
 
-### Compiler
-This compiles your READMEs (the course itself, along with exercises and questions), into html (both single page and presentation), along with just the code. This may need to be customized (see RU_github course) to allow you to run all the code during the compilation (also be wary that this code is run several times to get the various markdown outputs).
+* Use this as a template. Just click on the *'Use this template'* button on the top right of the repository to get started and set up your own course repository.   
 
-*Essential: This is NOT for public. When you are making your workshop public, this file must be removed from GitHub and added to your ,gitignore so you can maintain a copy in your local repository). 
+* All the course content will be contained in the package (currently titled "MyCoursePackage"). This structure is important as we will use this, along with the GitHub actions to automatically compile your course.  
+
+* You will need to first rename the package and the associated R project. From there you can add in the appropriate files for the course content, and update the config files. There are placeholders along with examples and formatting guides for most files. Anything surrounded by double question marks [??] is text to help, but should be replaced. 
+
+* Another thing to look out for is links. You will need to update any paths that point into the package to reflect the packages name.
+
+* If there are mistakes, or areas of the template you think are not as clear as they could be please take a fork, and submit a pull request with suggested updates so we can improve it. Alternatively raise an issue.
+
+* To see how the course template is compiled visit the [web page](https://rockefelleruniversity.github.io/RU_course_template/). Alternatively look at other [compiled courses](https://rockefelleruniversity.github.io/RU_RNAseq/) and their [Rmd files](https://github.com/RockefellerUniversity/RU_RNAseq/tree/master/rnaseq/inst/extdata/presRaw) on GitHub. 
 
 
-### .gitignore
-All files you want to be maintained locally, but that you do not want to end up on the repository on GitHub can be added here. It is essential the compiler is added to this before your repository is made public. 
+## Course Content
 
-### r_course
-This directory contains all your course content in it. There are several directories within this. 
+#### Course slides
+Find these at _MyCoursePackage/inst/extdata/presRaw/*_  
+Check out the example to get some idea of formatting within the Rmd
 
-#### customCSS
-This contains the foramtting css files that dictate the appearance of your course. We keep this consistent between workshops for uniformity.
+#### Exercises
+Find these at _MyCoursePackage/inst/doc/*_  
+Check out the example to get some idea of formatting within the Rmd
 
-#### dataset
-Any datsets that you are working with can go here. One big thing to be wary of is that you do not want them to be too big as GitHub has size limits for files.
+## Config files
 
-#### Exercises and Answers
-Exercises and Answers for these exercises will be put in these separate diorectories. These must be markdown files. These will be compiled by the compiler script to make the html files in the same directory. 
+#### DESCRIPTION
+Find this at *MyCoursePackage/DESCRIPTION*  
+Basic package description file. Ensure you have added in all dependencies you use in the package. Otherwise it will not compile. 
 
-#### Presentations
-You will not need to fill this section,
-Internally there will be a r_code, singlepage and slide directories, but these will be populated by the compilation script from the presRaw directory
+If you have non-R dependencies put them in the SystemRequirements field. Use the name associated with the conda installation. We will use Herper to install the software. 
 
-#### presRaw
-The markdown for the course content will be kept in here (or markdowns if you are running multiple split sessions). From here it will be copied and compiled into the various outputs by the compiler script. 
+#### Descriptions
+Find these at *MyCoursePackage/inst/extdata/Descriptions*  
+These files contain descriptive text, from which the cover page for the course is built. The placeholders show roughly what to expect. There are two types. 
 
-#### img
-All images that you want inserted into the markdowns will be stored in here. 
+1. The Course Overview: This Rmd contains a description of the overall course.
+2. The session overview: There will be one of these for each session you break the course down into. There could just be one, if you just have a single session. 
+
+#### course.yml
+Find this at *MyCoursePackage/inst/extdata/_course.yml*  
+This yml will contain the name for all the Rmd files.
+You will first need to update the CourseName. 
+If any of the Rmds have a different name to the template, update the .yml to reflect that. The order is important so the RMd for your first section should be first.   
+Each Rmd should be separated by a space. Except for exercises. Exercises should be in the order they appear. Exercises in the same section will be comma separated. There will then be a space between sections i.e. in the template the first 2 exercises are associated with the first session, while the 3rd exercise is associated with the final session. 
+
+
+## .github files for compiling
+The workflows for compilation are contained in the .github directory on the top level. These contain the github actions required to recognize updates to the repository, then recompile the content. Along with running basic checks of the R code. 
+
+There are three:
+
+1. **compilation-check** — builds the course and publishes the rendered site to `docs/`.
+2. **OS-check** — checks the course compiles across macOS, Windows and Ubuntu Linux (R release and devel).
+3. **legacy-R-check** — attempts to compile the course on every major R release since 3.5 (Linux only), documenting the R-version compatibility floor.
+
+The shared install-and-compile logic lives in the composite action at `.github/actions/compile-course`, which all three workflows call. You will have to replace the package name in these scripts. There may be further customization needed, but this is on a case by case basis to get compilation running. Most standard courses will work though. 
+
+## Finished?
+Once you have finished let us know and we will take a fork onto the Rockefeller GitHub. We can then start the process of getting it compiling and help review the course content.
+
+## Help
+If you need help contact the BRC [brc@rockefeller.edu], or raise an issue. 
+
 
