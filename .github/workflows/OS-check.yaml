@@ -119,17 +119,11 @@ jobs:
         shell: Rscript {0}
 
       ## On r-devel legs, move Bioconductor onto its devel branch so packages
-      ## resolve against the matching Bioc release; otherwise use Bioc release.
+      ## resolve against the matching Bioc release. (No devtools install - the
+      ## engine and the local-package install both use remotes now.)
       - name: Switch to Bioconductor devel
         if: matrix.config.r == 'devel'
-        run: |
-          BiocManager::install(version = "devel", ask = FALSE)
-          BiocManager::install("devtools", version = "devel")
-        shell: Rscript {0}
-
-      - name: Install devtools
-        if: matrix.config.r != 'devel'
-        run: BiocManager::install("devtools")
+        run: BiocManager::install(version = "devel", ask = FALSE)
         shell: Rscript {0}
 
       ## Install the compileCourses engine, install the local package and
@@ -140,7 +134,7 @@ jobs:
           repo: RockefellerUniversity
           subdir: MyCoursePackage
           branch: master
-          install-local-method: devtools
+          install-local-method: remotes
           compilecourses-version: ${{ matrix.config.r == 'devel' && 'devel' || '' }}
 
       - name: Upload check results

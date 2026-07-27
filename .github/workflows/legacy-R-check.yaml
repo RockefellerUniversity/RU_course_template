@@ -108,11 +108,13 @@ jobs:
       ## Install the course dependencies from the version-matched snapshot set
       ## above. On the oldest R legs some current packages may not resolve -
       ## that is expected and is what this probe documents.
+      ## No devtools: the engine and the local-package install both use remotes,
+      ## which is what lets the older R legs get further (devtools was the main
+      ## blocker below R 4.1).
       - name: Install dependencies
         run: |
           remotes::install_deps("MyCoursePackage/",dependencies = TRUE)
           remotes::install_cran("BiocManager")
-          BiocManager::install("devtools")
         shell: Rscript {0}
 
       ## Install the compileCourses engine, install the local package and
@@ -123,7 +125,7 @@ jobs:
           repo: RockefellerUniversity
           subdir: MyCoursePackage
           branch: master
-          install-local-method: devtools
+          install-local-method: remotes
 
       - name: Upload check results
         if: failure()

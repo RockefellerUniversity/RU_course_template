@@ -29,7 +29,7 @@ inputs:
     required: false
     default: ''
   install-local-method:
-    description: 'How to install the local course package: "rcmd" or "devtools"'
+    description: 'How to install the local course package: "rcmd" or "remotes"'
     required: false
     default: 'rcmd'
   install-local-on-master-only:
@@ -77,8 +77,8 @@ runs:
       if: ${{ inputs.install-local-on-master-only != 'true' || github.ref == 'refs/heads/master' }}
       shell: bash
       run: |
-        if [ "${{ inputs.install-local-method }}" = "devtools" ]; then
-          Rscript -e 'devtools::install("${{ inputs.subdir }}/", dependencies = TRUE, quick = TRUE)'
+        if [ "${{ inputs.install-local-method }}" = "remotes" ]; then
+          Rscript -e 'remotes::install_local("${{ inputs.subdir }}/", dependencies = TRUE, upgrade = "never", force = TRUE)'
         else
           R CMD INSTALL ./${{ inputs.subdir }}/
         fi
