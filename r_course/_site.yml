@@ -42,11 +42,8 @@ navbar:
         href: exercises/exercises/MyExercise3_exercise.html
       - text: Solution
         href: exercises/answers/MyExercise3_answers.html
-  right:
   - text: Getting help!
     href: https://github.com//RockefellerUniversity/RU_course_template/issues
-  - href: https://twitter.com/Rockefeller_BRC
-    icon: ion-social-twitter
 output:
   html_document:
     toc: yes
