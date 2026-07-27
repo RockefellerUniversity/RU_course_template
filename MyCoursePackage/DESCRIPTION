@@ -8,7 +8,7 @@ Description: This package shows an example framework to build a teaching course.
 License: GPL (>= 2)
 LazyData: TRUE
 biocViews: Training
-Depends: methods, ggplot2, rmarkdown, rio
+Depends: methods, ggplot2, rmarkdown
 Suggests: knitr,
     testthat,
     yaml

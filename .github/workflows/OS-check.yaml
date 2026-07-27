@@ -86,10 +86,13 @@ jobs:
         ## replaces a `remotes::system_requirements()` call that was fragile
         ## (it choked on base packages like `methods` in Depends, and on newer
         ## distro codenames) and had been failing this leg for months.
+        ## libuv1-dev provides uv.h, needed to build `fs` from source on the
+        ## r-devel leg (no binaries exist for devel, so fs/sass/bslib/rmarkdown
+        ## are compiled from source and fail without it).
         run: |
           sudo apt-get update -y
           sudo apt-get install -y \
-            libcurl4-openssl-dev libssl-dev libxml2-dev \
+            libcurl4-openssl-dev libssl-dev libxml2-dev libuv1-dev \
             libfontconfig1-dev libharfbuzz-dev libfribidi-dev \
             libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
 
