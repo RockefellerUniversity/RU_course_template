@@ -28,6 +28,13 @@ jobs:
     runs-on: ubuntu-22.04
     ## Bound each R leg so a hung/OOM render cannot run to the 6-hour cap.
     timeout-minutes: 120
+    ## Legs marked allow-failure in the matrix are attempted but do not fail the
+    ## workflow / redden the badge. Current compatibility floor is R 4.1: on
+    ## R <= 4.0 the toolchain won't install from the snapshots (devtools, which
+    ## the compileCourses engine imports, fails to build; R 3.5 can't even
+    ## download.file over TLS). These legs stay in the matrix to keep probing
+    ## the floor, but are non-blocking until the engine sheds its devtools dep.
+    continue-on-error: ${{ matrix.config.allow-failure || false }}
 
     name: R ${{ matrix.config.r }}
 
@@ -37,9 +44,10 @@ jobs:
         config:
           ## snapshot = PPM date roughly contemporary with each R release,
           ## chosen so CRAN package versions are compatible with that R.
-          - { r: '3.5', snapshot: '2019-01-02' }
-          - { r: '3.6', snapshot: '2020-04-24' }
-          - { r: '4.0', snapshot: '2021-03-31' }
+          ## allow-failure: below the current R 4.1 compatibility floor.
+          - { r: '3.5', snapshot: '2019-01-02', allow-failure: true }
+          - { r: '3.6', snapshot: '2020-04-24', allow-failure: true }
+          - { r: '4.0', snapshot: '2021-03-31', allow-failure: true }
           - { r: '4.1', snapshot: '2022-04-21' }
           - { r: '4.2', snapshot: '2023-04-20' }
           - { r: '4.3', snapshot: '2024-04-23' }
