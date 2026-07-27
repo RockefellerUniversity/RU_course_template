@@ -44,7 +44,7 @@ navbar:
         href: exercises/answers/MyExercise3_answers.html
   right:
   - text: Getting help!
-    href: https://github.com//RockefellerUniversity/RU_course_template/issues
+    href: https://github.com/RockefellerUniversity/RU_course_template/issues
   - href: https://twitter.com/Rockefeller_BRC
     icon: ion-social-twitter
 output:

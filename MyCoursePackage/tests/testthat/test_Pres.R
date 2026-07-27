@@ -1,4 +1,4 @@
-library(introToR)
+library(MyCoursePackage)
 context("Presentations")
 
 test_that("Check R code in presentations work", {

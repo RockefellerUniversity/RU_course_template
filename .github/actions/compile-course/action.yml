@@ -1,0 +1,96 @@
+name: 'Compile RU course'
+description: >-
+  Install the RockefellerUniversity/compileCourses engine and render the course
+  material (slides, single page and R code) via compileSingleCourseMaterial().
+  Runs inside the caller's job, so it works in the Bioconductor docker container
+  and in the OS / legacy-R matrix jobs alike.
+
+inputs:
+  repo:
+    description: 'GitHub org/owner of the course repository'
+    required: false
+    default: 'RockefellerUniversity'
+  subdir:
+    description: 'Package sub-directory holding the course content'
+    required: false
+    default: 'MyCoursePackage'
+  branch:
+    description: 'Branch to compile'
+    required: false
+    default: 'master'
+  compilecourses-version:
+    description: 'Bioc version for the engine install: "" (release) or "devel"'
+    required: false
+    default: ''
+  compilecourses-ref:
+    description: >-
+      Optional git ref/branch of RockefellerUniversity/compileCourses to install
+      instead of the default branch. Used to validate engine changes on a branch.
+    required: false
+    default: ''
+  install-local-method:
+    description: 'How to install the local course package: "rcmd" or "devtools"'
+    required: false
+    default: 'rcmd'
+  install-local-on-master-only:
+    description: 'Only install the local package when the ref is master'
+    required: false
+    default: 'true'
+
+runs:
+  using: 'composite'
+  steps:
+    ## Install the rendering engine. `compilecourses-version` selects the Bioc
+    ## release ("" = release, "devel" = Bioc devel, matched to r-devel legs);
+    ## `compilecourses-ref` optionally installs a specific engine branch, used
+    ## to validate engine changes before they are merged.
+    - name: Install compileCourses engine
+      shell: Rscript {0}
+      run: |
+        version <- "${{ inputs.compilecourses-version }}"
+        ref <- "${{ inputs.compilecourses-ref }}"
+        engine <- "RockefellerUniversity/compileCourses"
+        if (nzchar(ref)) engine <- paste0(engine, "@", ref)
+        if (nzchar(version)) {
+          BiocManager::install("rmarkdown", version = version)
+          BiocManager::install(engine, subdir = "compileCourses", version = version)
+        } else {
+          BiocManager::install("rmarkdown")
+          BiocManager::install(engine, subdir = "compileCourses")
+        }
+
+    ## Record the full package set for debugging failed builds.
+    - name: Session info
+      shell: Rscript {0}
+      run: |
+        if (!requireNamespace("sessioninfo", quietly = TRUE)) install.packages("sessioninfo")
+        options(width = 100)
+        pkgs <- installed.packages()[, "Package"]
+        sessioninfo::session_info(pkgs, include_base = TRUE)
+
+    ## Install the local course package. Gated to master by default so pull
+    ## requests still render (compileSingleCourseMaterial installs the package
+    ## itself) without an extra install. `install-local-method` picks the
+    ## installer each caller wants: `rcmd` (R CMD INSTALL, publish job) or
+    ## `devtools` (quick install, matrix jobs).
+    - name: Install local package
+      if: ${{ inputs.install-local-on-master-only != 'true' || github.ref == 'refs/heads/master' }}
+      shell: bash
+      run: |
+        if [ "${{ inputs.install-local-method }}" = "devtools" ]; then
+          Rscript -e 'devtools::install("${{ inputs.subdir }}/", dependencies = TRUE, quick = TRUE)'
+        else
+          R CMD INSTALL ./${{ inputs.subdir }}/
+        fi
+
+    ## Render the whole course (slides + single page + code + exercises + front
+    ## page) into r_course/.
+    - name: Compile course
+      shell: Rscript {0}
+      run: |
+        require(compileCourses)
+        compileCourses::compileSingleCourseMaterial(
+          repo   = "${{ inputs.repo }}",
+          subdir = "${{ inputs.subdir }}",
+          branch = "${{ inputs.branch }}"
+        )

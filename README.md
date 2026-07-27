@@ -36,14 +36,14 @@ Basic package description file. Ensure you have added in all dependencies you us
 If you have non-R dependencies put them in the SystemRequirements field. Use the name associated with the conda installation. We will use Herper to install the software. 
 
 #### Descriptions
-Find these at *MyCoursePackage/inst/doc/Descriptions*  
+Find these at *MyCoursePackage/inst/extdata/Descriptions*  
 These files contain descriptive text, from which the cover page for the course is built. The placeholders show roughly what to expect. There are two types. 
 
 1. The Course Overview: This Rmd contains a description of the overall course.
 2. The session overview: There will be one of these for each session you break the course down into. There could just be one, if you just have a single session. 
 
 #### course.yml
-Find this at *MyCoursePackage/inst/doc/_course.yml*  
+Find this at *MyCoursePackage/inst/extdata/_course.yml*  
 This yml will contain the name for all the Rmd files.
 You will first need to update the CourseName. 
 If any of the Rmds have a different name to the template, update the .yml to reflect that. The order is important so the RMd for your first section should be first.   
@@ -53,7 +53,13 @@ Each Rmd should be separated by a space. Except for exercises. Exercises should 
 ## .github files for compiling
 The workflows for compilation are contained in the .github directory on the top level. These contain the github actions required to recognize updates to the repository, then recompile the content. Along with running basic checks of the R code. 
 
-There are two. You will have to replace the package name in these scripts. There may be further customization needed, but this is on a case by case basis to get compilation running. Most standard courses will work though. 
+There are three:
+
+1. **compilation-check** — builds the course and publishes the rendered site to `docs/`.
+2. **OS-check** — checks the course compiles across macOS, Windows and Ubuntu Linux (R release and devel).
+3. **legacy-R-check** — attempts to compile the course on every major R release since 3.5 (Linux only), documenting the R-version compatibility floor.
+
+The shared install-and-compile logic lives in the composite action at `.github/actions/compile-course`, which all three workflows call. You will have to replace the package name in these scripts. There may be further customization needed, but this is on a case by case basis to get compilation running. Most standard courses will work though. 
 
 ## Finished?
 Once you have finished let us know and we will take a fork onto the Rockefeller GitHub. We can then start the process of getting it compiling and help review the course content.

@@ -1,4 +1,4 @@
-detaiks.chunk-details > summary.chunk-summary {
+details.chunk-details > summary.chunk-summary {
   text-align: right;
 }
 details.chunk-details[open] > summary.chunk-summary::after {
