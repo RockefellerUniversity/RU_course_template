@@ -1,4 +1,4 @@
 library(testthat)
-library(introToR)
+library(MyCoursePackage)
 
-test_check("introToR")
+test_check("MyCoursePackage")
