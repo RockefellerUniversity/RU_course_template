@@ -39,9 +39,9 @@ mean(a,b)
 ```{r,echo=toMessage}
 ## If your questions are too labor intensive to actually do during compilation you can add eval=F to the markdown header.
 
-## A caveat of using eval=F is you cannot check the code is running accurately, so it is good to at elast double check it yourself first
+## A caveat of using eval=F is you cannot check the code is running accurately, so it is good to at least double check it yourself first
 
-## If any subsequent chunks rely on answers from a chunk that is eval=F, you will need to load them back in. Ideally this will be done behind the scenes by setting echp=F for the chunk that just loads. 
+## If any subsequent chunks rely on answers from a chunk that is eval=F, you will need to load them back in. Ideally this will be done behind the scenes by setting echo=FALSE for the chunk that just loads. 
 
 
 ```
