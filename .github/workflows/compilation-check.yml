@@ -191,6 +191,12 @@ jobs:
       - name: Commit rendered site
         if: github.ref == 'refs/heads/master'
         run: |
+          ## The checkout is owned by a different UID than the user running git
+          ## inside the Bioconductor container, so modern git (>= 2.35) refuses
+          ## to operate ("dubious ownership"). Mark the workspace safe. (The old
+          ## workflow sidestepped this by building git 2.26 from source, which
+          ## predates the check; this is the modern one-line equivalent.)
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config --global user.email "tc.infomatics@gmail.com"
           git config --global http.postBuffer 263112000
           git add docs r_course

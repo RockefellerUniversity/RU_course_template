@@ -25,6 +25,12 @@ jobs:
     runs-on: ${{ matrix.config.os }}
     ## Bound each matrix leg so a hung/OOM render cannot run to the 6-hour cap.
     timeout-minutes: 120
+    ## The r-devel legs chronically fail on binary availability (Bioconductor
+    ## devel / r-devel package binaries are often not published yet, forcing
+    ## source builds that break, e.g. data.table on macOS). Keep them running
+    ## for information but don't let them fail the workflow / redden the badge -
+    ## the release legs are the gating signal.
+    continue-on-error: ${{ matrix.config.r == 'devel' }}
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
@@ -76,13 +82,16 @@ jobs:
 
       - name: Install Linux system dependencies
         if: runner.os == 'Linux'
+        ## Static list of the system libraries the course packages need. This
+        ## replaces a `remotes::system_requirements()` call that was fragile
+        ## (it choked on base packages like `methods` in Depends, and on newer
+        ## distro codenames) and had been failing this leg for months.
         run: |
-          sysreqs=$(Rscript -e 'cat("apt-get update -y && apt-get install -y", paste(gsub("apt-get install -y ", "", remotes::system_requirements("ubuntu-22.04", package=unlist(strsplit(read.dcf("MyCoursePackage/DESCRIPTION")[,"Depends"],", |\n")))), collapse = " "))')
-          echo $sysreqs
-          sudo -s eval "$sysreqs"
-          sudo apt -y install libfontconfig1-dev
-          sudo apt-get install libharfbuzz-dev libfribidi-dev
-          sudo apt-get install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            libcurl4-openssl-dev libssl-dev libxml2-dev \
+            libfontconfig1-dev libharfbuzz-dev libfribidi-dev \
+            libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
 
       - name: Install macOS system dependencies
         if: matrix.config.os == 'macOS-latest'

@@ -86,13 +86,16 @@ jobs:
           restore-keys: ${{ env.cache-version }}-${{ runner.os }}-R${{ matrix.config.r }}-
 
       - name: Install Linux system dependencies
+        ## Static system-library list. The old-R snapshots ship a `remotes`
+        ## too old to have `system_requirements()` (or one that doesn't know
+        ## "ubuntu-22.04"), so deriving sys-deps dynamically fails on these
+        ## legs - install the known set directly instead.
         run: |
-          sysreqs=$(Rscript -e 'cat("apt-get update -y && apt-get install -y", paste(gsub("apt-get install -y ", "", remotes::system_requirements("ubuntu-22.04", package=unlist(strsplit(read.dcf("MyCoursePackage/DESCRIPTION")[,"Depends"],", |\n")))), collapse = " "))')
-          echo $sysreqs
-          sudo -s eval "$sysreqs"
-          sudo apt -y install libfontconfig1-dev
-          sudo apt-get install -y libharfbuzz-dev libfribidi-dev
-          sudo apt-get install -y libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            libcurl4-openssl-dev libssl-dev libxml2-dev \
+            libfontconfig1-dev libharfbuzz-dev libfribidi-dev \
+            libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
 
       ## Install the course dependencies from the version-matched snapshot set
       ## above. On the oldest R legs some current packages may not resolve -
