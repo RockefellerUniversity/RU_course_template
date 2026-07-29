@@ -36,14 +36,28 @@ inputs:
     description: 'Only install the local package when the ref is master'
     required: false
     default: 'true'
+  full-rebuild:
+    description: >-
+      "true" ignores any committed _freeze/ and re-executes everything (the
+      scheduled canary); "false" reuses frozen results for a fast build.
+    required: false
+    default: 'false'
 
 runs:
   using: 'composite'
   steps:
-    ## Install the rendering engine. `compilecourses-version` selects the Bioc
-    ## release ("" = release, "devel" = Bioc devel, matched to r-devel legs);
-    ## `compilecourses-ref` optionally installs a specific engine branch, used
-    ## to validate engine changes before they are merged.
+    ## Quarto CLI — the Bioconductor docker and the OS/legacy-R runners don't
+    ## ship it. The engine drives Quarto via the `quarto` R package, which needs
+    ## the CLI on PATH.
+    - name: Set up Quarto
+      uses: quarto-dev/quarto-actions/setup@v2
+      with:
+        version: '1.4'
+
+    ## Install the rendering engine (pulls its CRAN deps: quarto, remotes,
+    ## knitr, yaml). `compilecourses-version` selects the Bioc release
+    ## ("" = release, "devel" matched to r-devel legs); `compilecourses-ref`
+    ## optionally installs a specific engine branch to validate before merge.
     - name: Install compileCourses engine
       shell: Rscript {0}
       run: |
@@ -52,10 +66,8 @@ runs:
         engine <- "RockefellerUniversity/compileCourses"
         if (nzchar(ref)) engine <- paste0(engine, "@", ref)
         if (nzchar(version)) {
-          BiocManager::install("rmarkdown", version = version)
           BiocManager::install(engine, subdir = "compileCourses", version = version)
         } else {
-          BiocManager::install("rmarkdown")
           BiocManager::install(engine, subdir = "compileCourses")
         }
 
@@ -72,7 +84,7 @@ runs:
     ## requests still render (compileSingleCourseMaterial installs the package
     ## itself) without an extra install. `install-local-method` picks the
     ## installer each caller wants: `rcmd` (R CMD INSTALL, publish job) or
-    ## `devtools` (quick install, matrix jobs).
+    ## `remotes` (remotes::install_local, matrix jobs).
     - name: Install local package
       if: ${{ inputs.install-local-on-master-only != 'true' || github.ref == 'refs/heads/master' }}
       shell: bash
@@ -92,5 +104,6 @@ runs:
         compileCourses::compileSingleCourseMaterial(
           repo   = "${{ inputs.repo }}",
           subdir = "${{ inputs.subdir }}",
-          branch = "${{ inputs.branch }}"
+          branch = "${{ inputs.branch }}",
+          freeze = !as.logical("${{ inputs.full-rebuild }}")
         )

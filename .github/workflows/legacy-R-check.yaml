@@ -7,6 +7,8 @@
 ## resolve every dependency. fail-fast is disabled so each R version is reported
 ## independently and the badge documents the compatibility floor.
 
+## No schedule: legacy R versions don't change month-to-month, so a recurring
+## canary here adds nothing. Runs only on push / PR to master.
 on:
   push:
     branches:
@@ -14,8 +16,6 @@ on:
   pull_request:
     branches:
       - master
-  schedule:
-    - cron: "1 7 11 * *"
 
 name: legacy-R-check
 
@@ -125,7 +125,10 @@ jobs:
           repo: RockefellerUniversity
           subdir: MyCoursePackage
           branch: master
+          compilecourses-ref: quarto-migration   # TEMP: test branch engine; revert before merge
           install-local-method: remotes
+          ## Old-R execution canary: always full-execute (never reuse freeze).
+          full-rebuild: true
 
       - name: Upload check results
         if: failure()
