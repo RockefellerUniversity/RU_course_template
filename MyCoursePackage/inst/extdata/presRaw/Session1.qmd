@@ -2,8 +2,8 @@
 title: "My Course Template, Session 1"
 subtitle: " <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html> Bioinformatics Resource Center - Rockefeller University"
 author:
-  - "http://rockefelleruniversity.github.io/RU_course_template/"
-  - "brc@rockefeller.edu"
+  - "[http://rockefelleruniversity.github.io/RU_course_template/](http://rockefelleruniversity.github.io/RU_course_template/)"
+  - "[brc@rockefeller.edu](mailto:brc@rockefeller.edu)"
 ---
 
 ```{r,include=FALSE}
@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE, tidy = T)
 - [Data types in R](https://rockefelleruniversity.github.io/Intro_To_R_1Day/r_course/presentations/singlepage/introToR_Session1.html#data_types_in_r)
 - [Reading and writing in R](https://rockefelleruniversity.github.io/Intro_To_R_1Day/r_course/presentations/singlepage/introToR_Session1.html#reading-and-writing-data-in-r)
 
-# Set Up {.inverse .center .middle}
+# Set Up {background-color="#23373B" .center .middle}
 
 ## Materials
 
@@ -72,7 +72,7 @@ setwd("/PathToMyDownload/RU_Course_template/r_course")
 # e.g. setwd("~/Downloads/Intro_To_R_1Day/r_course")
 ```
 
-# Another section header {.inverse .center .middle}
+# Another section header {background-color="#23373B" .center .middle}
 
 ## Slide Structure
 

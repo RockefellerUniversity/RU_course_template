@@ -2,8 +2,8 @@
 title: "My Course Template, Session 2"
 subtitle: " <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html> Bioinformatics Resource Center - Rockefeller University"
 author:
-  - "http://rockefelleruniversity.github.io/RU_course_template/"
-  - "brc@rockefeller.edu"
+  - "[http://rockefelleruniversity.github.io/RU_course_template/](http://rockefelleruniversity.github.io/RU_course_template/)"
+  - "[brc@rockefeller.edu](mailto:brc@rockefeller.edu)"
 ---
 
 ```{r setup, include=FALSE}
