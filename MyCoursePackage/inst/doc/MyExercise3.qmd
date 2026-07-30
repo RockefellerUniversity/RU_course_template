@@ -4,14 +4,17 @@ author: "Rockefeller University, Bioinformatics Resource Centre"
 date: "https://rockefelleruniversity.github.io/RU_course_template/"
 format:
   html:
-    theme: united
-    highlight-style: tango
+    theme:
+      - cosmo
+      - metropolis-page.scss    # same RU look as the single-page presentations
     embed-resources: true
+    format-links: false
+    include-before-body: page-logo.html
 params:
   toMessage: false
 ---
 
-```{r, setup,include=FALSE}
+```{r, setup,include=FALSE, purl=FALSE}
 toMessage <- ifelse(!is.null(params$toMessage),params$toMessage,FALSE)
 message(toMessage)
 ```

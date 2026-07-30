@@ -6,7 +6,7 @@ author:
   - "[brc@rockefeller.edu](mailto:brc@rockefeller.edu)"
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, purl=FALSE}
 suppressPackageStartupMessages(require(knitr))
 knitr::opts_chunk$set(echo = TRUE, tidy = T)
 ```
@@ -34,5 +34,3 @@ Exercise on functions can be found [here](../../exercises/exercises/MyExercise3_
 ## Answers to exercise.
 
 Answers can be found here  [here](../../exercises/answers/MyExercise3_answers.html)
-
-Rcode for answers can be found here  [here](../../exercises/answers/MyExercise3_answers.R)

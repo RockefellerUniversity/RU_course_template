@@ -6,7 +6,7 @@ author:
   - "[brc@rockefeller.edu](mailto:brc@rockefeller.edu)"
 ---
 
-```{r,include=FALSE}
+```{r,include=FALSE,purl=FALSE}
 suppressPackageStartupMessages(require(knitr))
 knitr::opts_chunk$set(echo = TRUE, tidy = T)
 ```
@@ -134,8 +134,6 @@ We often have several exercise slides per session. So you can just copy and past
 
 Answers can be found [here](../../exercises/answers/MyExercise1_answers.html)
 
-R code for solutions can be found [here](../../exercises/answers/MyExercise1_answers.R)
-
 ## Exercise again
 
 So we can have some more sections here describing some new important topic
@@ -149,5 +147,3 @@ Then more exercises
 ## Answers to exercise
 
 Answers can be found [here](../../exercises/answers/MyExercise2_answers.html)
-
-R code for solutions can be found [here](../../exercises/answers/MyExercise2_answers.R)
