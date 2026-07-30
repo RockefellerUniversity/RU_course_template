@@ -52,7 +52,10 @@ runs:
     - name: Set up Quarto
       uses: quarto-dev/quarto-actions/setup@v2
       with:
-        version: 'release'   # latest stable ('1.4' is not a valid release tag -> 404)
+        ## Pin a specific version: 'release' resolves via `jq`, which the
+        ## Bioconductor docker container lacks (exit 127). A pinned version
+        ## builds the download URL directly, no jq needed. Bump as desired.
+        version: '1.4.554'
 
     ## Install the rendering engine (pulls its CRAN deps: quarto, remotes,
     ## knitr, yaml). `compilecourses-version` selects the Bioc release
