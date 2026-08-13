@@ -62,17 +62,45 @@
 # their anchors are not validated (only file existence + remote links are).
 .isRevealDeck <- function(txt) grepl('class="reveal"|reveal\\.js', txt)
 
-# Best-effort remote reachability via base libcurl. 2xx/3xx = ok; anything else
-# (including connection error / timeout) is reported, never thrown. Cached per
-# run. `timeout` is only passed on R that supports it (added in 3.6).
+# Minimal URL host/segment split (base only; no URL parser needed).
+.urlHost <- function(url) tolower(sub("^[a-z]+://([^/]+).*$", "\\1", url, ignore.case = TRUE))
+.urlSegs <- function(url) {
+  p <- sub("[?#].*$", "", sub("^[a-z]+://[^/]+", "", url, ignore.case = TRUE))
+  Filter(nzchar, strsplit(p, "/", fixed = TRUE)[[1]])
+}
+
+# Is the `gh` CLI available? (Preinstalled on GitHub-hosted runners.)
+.hasGh <- function() nzchar(Sys.which("gh"))
+
+# Best-effort remote reachability, cached per run; 2xx/3xx = ok.
+#  * github.com links are verified through the AUTHENTICATED GitHub API via the
+#    `gh` CLI (a private repo/user is invisible to an unauthenticated web HEAD,
+#    but the token can see it). The web path maps to `repos/{o}/{r}` (>=2 path
+#    segments) or `users/{name}` (1 segment); a missing repo/user still 404s, so
+#    a genuinely dead link is still caught. `gh` reads its own token from the
+#    environment (GH_TOKEN / GITHUB_TOKEN) and only ever contacts GitHub. Falls
+#    back to an unauthenticated probe if `gh` is not installed.
+#  * everything else uses base libcurl with no credentials.
+# Never throws.
 .remoteStatus <- function(url, cache, timeout = 10L) {
   if (!is.null(cache[[url]])) return(cache[[url]])
   res <- tryCatch({
-    args <- list(url = url, redirect = TRUE, verify = TRUE)
-    if ("timeout" %in% names(formals(curlGetHeaders))) args$timeout <- timeout
-    st <- attr(do.call(curlGetHeaders, args), "status")
-    if (is.null(st)) st <- NA_integer_
-    list(ok = !is.na(st) && st >= 200 && st < 400, detail = paste("HTTP", st))
+    if (.urlHost(url) %in% c("github.com", "www.github.com") && .hasGh()) {
+      segs <- .urlSegs(url)
+      api  <- if (length(segs) >= 2L) sprintf("repos/%s/%s", segs[1], sub("\\.git$", "", segs[2]))
+              else if (length(segs) == 1L) sprintf("users/%s", segs[1])
+              else "rate_limit"
+      st <- suppressWarnings(system2("gh", c("api", api, "--silent"),
+                                     stdout = FALSE, stderr = FALSE, timeout = timeout))
+      ok <- identical(as.integer(st), 0L)
+      list(ok = ok, detail = if (ok) "GitHub API ok" else "GitHub API not found/unreachable")
+    } else {
+      args <- list(url = url, redirect = TRUE, verify = TRUE)
+      if ("timeout" %in% names(formals(curlGetHeaders))) args$timeout <- timeout
+      st <- attr(do.call(curlGetHeaders, args), "status")
+      if (is.null(st)) st <- NA_integer_
+      list(ok = !is.na(st) && st >= 200 && st < 400, detail = paste("HTTP", st))
+    }
   }, error = function(e) list(ok = FALSE, detail = conditionMessage(e)))
   cache[[url]] <- res
   res

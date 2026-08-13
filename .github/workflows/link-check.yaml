@@ -52,6 +52,11 @@ jobs:
       - name: Verify hyperlinks
         env:
           LINK_CHECK_REMOTE: "true"
+          ## Token lets the script verify github.com links via the authenticated
+          ## API (this repo is private, so an unauthenticated web HEAD 404s). The
+          ## script only ever sends it to api.github.com.
+          GITHUB_PAT: ${{ secrets.GHTOKEN2 }}
+          GITHUB_TOKEN: ${{ secrets.GHTOKEN2 }}
         run: Rscript .github/scripts/link-check.R docs
 
       - name: Upload link-check report
