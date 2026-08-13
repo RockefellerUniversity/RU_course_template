@@ -3,6 +3,6 @@ Description:
   OverviewRmd: CourseOverview.Rmd
 Presentations:
     titles: Session1 Session2
-    PresRmd: Session1.Rmd Session2.Rmd
+    PresRmd: Session1.qmd Session2.qmd
     PresOverviewRmd: Session1Overview.Rmd Session2Overview.Rmd
-    Exercises: MyExercise1.Rmd,MyExercise2.Rmd MyExercise3.Rmd
+    Exercises: MyExercise1.qmd,MyExercise2.qmd MyExercise3.qmd
