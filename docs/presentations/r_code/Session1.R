@@ -7,3 +7,11 @@ Table <- read.table("data/readThisTable.csv",sep=",",header=T)
 # myresult<-10^6 +1
 
 load("data/myresult.RData")
+
+# 
+# boxplot(Table[,2:7])
+# 
+# 
+
+boxplot(Table[,2:7])
+
