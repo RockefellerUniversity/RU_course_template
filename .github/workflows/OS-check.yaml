@@ -138,7 +138,7 @@ jobs:
           repo: RockefellerUniversity
           subdir: MyCoursePackage
           branch: master
-          compilecourses-ref: quarto-migration   # TEMP: test branch engine; revert before merge
+          compilecourses-ref: quarto-migration   # Quarto engine branch — pinned during the phased migration; remove at the final cut-over
           install-local-method: remotes
           compilecourses-version: ${{ matrix.config.r == 'devel' && 'devel' || '' }}
           ## Cross-platform execution canary: always full-execute (never reuse freeze).
