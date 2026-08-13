@@ -120,6 +120,42 @@ You can then just load in the result of the computation, and keep using the resu
 load("data/myresult.RData")
 ```
 
+## Links
+
+Links to external sources and other material can be included:
+
+[BRC GitHub](https://github.com/rockefelleruniversity)
+
+The links are also checked to ensure that they work by the link-check action. When you check the GitHub actions if there is a green check, it means that all the links are still valid.
+
+[BRC GitHub](https://github.com/rafelleruniversity)
+
+
+## Section A
+
+When explaining the same topic over multiple slides you can use the same header. This is often useful if you have a large code chunk coupled with a large figure. You can set eval=F, repeat the same code then set eval to TRUE and echo to FALSE
+
+```{r, eval=F}
+
+boxplot(Table[,2:7])
+
+
+```
+
+## Section A
+
+While looking at this in the single page form this should also collapse redundant titles
+
+```{r, eval=T, echo=F}
+boxplot(Table[,2:7])
+
+```
+
+## Section A
+
+While looking at this in the single page form this should also collapse redundant titles. This allows you to repeat it in slides, but have just one title for single page. 
+
+
 ## Exercises
 
 The following few slides show you how to structure exercise slides.
