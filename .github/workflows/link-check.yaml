@@ -8,10 +8,9 @@
 ## compileCourses::checkCourseLinks(), and upload a full pass/fail audit
 ## (failures first) as an artifact.
 ##
-## Report-only: a broken link is surfaced as a ::warning annotation and listed
-## in the report, but never reds this workflow. checkCourseLinks() is itself
-## non-fatal (see the engine); flip the "Fail on broken local links" step below
-## on if you'd rather gate.
+## Gating: any broken link fails this workflow (red mark on the master commit /
+## Actions tab), in addition to the ::warning annotations and the report
+## artifact. Set LINK_CHECK_FAIL_ON_BROKEN=false to make it report-only instead.
 on:
   workflow_run:
     workflows: ["compilation-check"]
@@ -46,12 +45,14 @@ jobs:
           r-version: release
 
       ## Full audit of docs/: local file + anchor targets and remote
-      ## reachability. Writes link-check-report.tsv (failures first) and emits
-      ## ::warning annotations for broken links. Non-fatal. Set
-      ## LINK_CHECK_REMOTE=false to skip outbound requests.
+      ## reachability. Writes link-check-report.tsv (failures first), emits
+      ## ::warning annotations, and exits non-zero if any link is broken (so the
+      ## run goes red). Set LINK_CHECK_REMOTE=false to skip outbound requests, or
+      ## LINK_CHECK_FAIL_ON_BROKEN=false to make it report-only.
       - name: Verify hyperlinks
         env:
           LINK_CHECK_REMOTE: "true"
+          LINK_CHECK_FAIL_ON_BROKEN: "true"
           ## Token lets the script verify github.com links via the authenticated
           ## API (this repo is private, so an unauthenticated web HEAD 404s). The
           ## script only ever sends it to api.github.com.
@@ -59,6 +60,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GHTOKEN2 }}
         run: Rscript .github/scripts/link-check.R docs
 
+      ## Always upload the audit, even when the verify step failed the run.
       - name: Upload link-check report
         if: always()
         uses: actions/upload-artifact@v4
@@ -66,14 +68,3 @@ jobs:
           name: link-check-report
           path: link-check-report.tsv
           if-no-files-found: warn
-
-      ## Optional gate — off by default (report-only). Uncomment to fail the
-      ## workflow when any LOCAL link (a missing file/anchor within the site,
-      ## i.e. a real structural break) is broken, while still tolerating flaky
-      ## remote hosts.
-      # - name: Fail on broken local links
-      #   run: |
-      #     a <- read.delim("link-check-report.tsv", stringsAsFactors = FALSE)
-      #     bad <- subset(a, status == "FAIL" & type %in% c("local", "anchor"))
-      #     if (nrow(bad)) { print(bad); stop(nrow(bad), " broken local link(s)") }
-      #   shell: Rscript {0}
