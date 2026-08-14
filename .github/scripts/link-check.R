@@ -219,10 +219,18 @@ checkCourseLinks <- function(courseFolder = "docs", checkRemote = TRUE,
 
 ## ---- CLI entry point (used by the link-check workflow) ---------------------
 ## Runs only when invoked as `Rscript link-check.R ...` (a `--file=` arg is
-## present), not when the functions are source()d for reuse.
+## present), not when the functions are source()d for reuse. Exits non-zero when
+## any link is broken so CI shows a red mark (set LINK_CHECK_FAIL_ON_BROKEN=false
+## to keep it report-only). checkCourseLinks() itself stays non-fatal.
 if (any(grepl("^--file=", commandArgs(FALSE)))) {
   a       <- commandArgs(trailingOnly = TRUE)
   folder  <- if (length(a) >= 1L && nzchar(a[[1]])) a[[1]] else "docs"
-  remote  <- !tolower(Sys.getenv("LINK_CHECK_REMOTE", "true")) %in% c("false", "0", "no")
-  checkCourseLinks(folder, checkRemote = remote)
+  remote  <- !tolower(Sys.getenv("LINK_CHECK_REMOTE", "true"))          %in% c("false", "0", "no")
+  failOn  <- !tolower(Sys.getenv("LINK_CHECK_FAIL_ON_BROKEN", "true"))  %in% c("false", "0", "no")
+  res     <- checkCourseLinks(folder, checkRemote = remote)
+  nFail   <- if (nrow(res)) sum(res$status == "FAIL") else 0L
+  if (failOn && nFail > 0L) {
+    message(sprintf("Failing the check: %d broken link(s).", nFail))
+    quit(status = 1L, save = "no")
+  }
 }
