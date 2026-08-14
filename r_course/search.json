@@ -11,7 +11,7 @@
     "href": "index.html#course-overview",
     "title": "Course Template",
     "section": "Course Overview",
-    "text": "Course Overview\n\n\nCourse Integrity\nThis course is compiled automatically on 2026-08-13   \nThe course is tested and available on MacOS, Windows and Ubuntu Linux for R version 4.6.1 (2026-06-24)  \nThe course is also tested against every major R release since 3.5 (3.5 → 4.5) on Linux  \n \n\n\nOverview\n?? This Section is used to build the course website ??\n?? What is this course about??\n?? Break down of course structure. You can look here for guidance: https://rockefelleruniversity.github.io/Intro_To_R_1Day/??\nCourse material and exercises are available to view as rendered HTML at https://rockefelleruniversity.github.io/RU_Course_template/. All material is available to download under GPL v2 license."
+    "text": "Course Overview\n\n\nCourse Integrity\nThis course is compiled automatically on 2026-08-14   \nThe course is tested and available on MacOS, Windows and Ubuntu Linux for R version 4.6.1 (2026-06-24)  \nThe course is also tested against every major R release since 3.5 (3.5 → 4.5) on Linux  \n \n\n\nOverview\n?? This Section is used to build the course website ??\n?? What is this course about??\n?? Break down of course structure. You can look here for guidance: https://rockefelleruniversity.github.io/Intro_To_R_1Day/??\nCourse material and exercises are available to view as rendered HTML at https://rockefelleruniversity.github.io/RU_Course_template/. All material is available to download under GPL v2 license."
   },
   {
     "objectID": "index.html#setting-up",
