@@ -10,10 +10,6 @@ inputs:
     description: 'GitHub org/owner of the course repository'
     required: false
     default: 'RockefellerUniversity'
-  subdir:
-    description: 'Package sub-directory holding the course content'
-    required: false
-    default: 'MyCoursePackage'
   branch:
     description: 'Branch to compile'
     required: false
@@ -28,14 +24,6 @@ inputs:
       instead of the default branch. Used to validate engine changes on a branch.
     required: false
     default: ''
-  install-local-method:
-    description: 'How to install the local course package: "rcmd" or "remotes"'
-    required: false
-    default: 'rcmd'
-  install-local-on-master-only:
-    description: 'Only install the local package when the ref is master'
-    required: false
-    default: 'true'
   full-rebuild:
     description: >-
       "true" ignores any committed _freeze/ and re-executes everything (the
@@ -83,30 +71,18 @@ runs:
         pkgs <- installed.packages()[, "Package"]
         sessioninfo::session_info(pkgs, include_base = TRUE)
 
-    ## Install the local course package. Gated to master by default so pull
-    ## requests still render (compileSingleCourseMaterial installs the package
-    ## itself) without an extra install. `install-local-method` picks the
-    ## installer each caller wants: `rcmd` (R CMD INSTALL, publish job) or
-    ## `remotes` (remotes::install_local, matrix jobs).
-    - name: Install local package
-      if: ${{ inputs.install-local-on-master-only != 'true' || github.ref == 'refs/heads/master' }}
-      shell: bash
-      run: |
-        if [ "${{ inputs.install-local-method }}" = "remotes" ]; then
-          Rscript -e 'remotes::install_local("${{ inputs.subdir }}/", dependencies = TRUE, upgrade = "never", force = TRUE)'
-        else
-          R CMD INSTALL ./${{ inputs.subdir }}/
-        fi
-
     ## Render the whole course (slides + single page + code + exercises + front
-    ## page) into r_course/.
+    ## page) into r_course/. The flat course lives at the repo root (getwd()):
+    ## compileSingleCourseMaterial reads its content from the top-level folders
+    ## and installs the thin dependency package itself (installPkg defaults TRUE),
+    ## so no separate local-install step is needed. `name` defaults to the
+    ## checkout's basename (= the repo name), used in the generated links.
     - name: Compile course
       shell: Rscript {0}
       run: |
         require(compileCourses)
         compileCourses::compileSingleCourseMaterial(
           repo   = "${{ inputs.repo }}",
-          subdir = "${{ inputs.subdir }}",
           branch = "${{ inputs.branch }}",
           freeze = !as.logical("${{ inputs.full-rebuild }}")
         )

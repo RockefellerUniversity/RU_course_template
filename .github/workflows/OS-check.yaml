@@ -69,7 +69,7 @@ jobs:
       - name: Query dependencies
         run: |
           install.packages('remotes')
-          saveRDS(remotes::dev_package_deps("MyCoursePackage/",dependencies = TRUE), ".github/depends.Rds", version = 2)
+          saveRDS(remotes::dev_package_deps(".",dependencies = TRUE), ".github/depends.Rds", version = 2)
           writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}
 
@@ -117,7 +117,7 @@ jobs:
       ## Install the course package's declared dependencies (plus BiocManager).
       - name: Install dependencies
         run: |
-          remotes::install_deps("MyCoursePackage/",dependencies = TRUE)
+          remotes::install_deps(".",dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
           remotes::install_cran("BiocManager", force = TRUE)
         shell: Rscript {0}
@@ -136,10 +136,8 @@ jobs:
         uses: ./.github/actions/compile-course
         with:
           repo: RockefellerUniversity
-          subdir: MyCoursePackage
           branch: master
           compilecourses-ref: quarto-migration   # Quarto engine branch — pinned during the phased migration; remove at the final cut-over
-          install-local-method: remotes
           compilecourses-version: ${{ matrix.config.r == 'devel' && 'devel' || '' }}
           ## Cross-platform execution canary: always full-execute (never reuse freeze).
           full-rebuild: true
