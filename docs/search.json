@@ -1,24 +1,24 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Course Template",
-    "section": "",
-    "text": "BIOINFORMATICSRESOURCE CENTER"
-  },
-  {
     "objectID": "index.html#course-overview",
     "href": "index.html#course-overview",
     "title": "Course Template",
     "section": "Course Overview",
-    "text": "Course Overview\n\n\nCourse Integrity\nThis course is compiled automatically on 2026-08-14   \nThe course is tested and available on MacOS, Windows and Ubuntu Linux for R version 4.6.1 (2026-06-24)  \nThe course is also tested against every major R release since 3.5 (3.5 → 4.5) on Linux  \n \n\n\nOverview\n?? This Section is used to build the course website ??\n?? What is this course about??\n?? Break down of course structure. You can look here for guidance: https://rockefelleruniversity.github.io/Intro_To_R_1Day/??\nCourse material and exercises are available to view as rendered HTML at https://rockefelleruniversity.github.io/RU_Course_template/. All material is available to download under GPL v2 license."
+    "text": "Course Overview\n\n?? This Section is used to build the course website ??\n?? What is this course about??\n?? Break down of course structure. You can look here for guidance: https://rockefelleruniversity.github.io/Intro_To_R_1Day/??\nCourse material and exercises are available to view as rendered HTML at https://rockefelleruniversity.github.io/RU_Course_template/. All material is available to download under GPL v2 license."
+  },
+  {
+    "objectID": "index.html#course-integrity",
+    "href": "index.html#course-integrity",
+    "title": "Course Template",
+    "section": "Course Integrity",
+    "text": "Course Integrity\nThis course is compiled automatically on 2026-08-17   \nThe course is tested and available on MacOS, Windows and Ubuntu Linux for R version 4.6.1 (2026-06-24)  \nThe course is also tested against every major R release since 3.5 (3.5 → 4.5) on Linux"
   },
   {
     "objectID": "index.html#setting-up",
     "href": "index.html#setting-up",
     "title": "Course Template",
     "section": "Setting up",
-    "text": "Setting up\n\n\nSystem Requirements\n\n\nInstall R\nR can be installed from the R-project website.\nThe R website can be found here http://www.r-project.org/. This website has all the latest information about R updates, conferences and installation\nYou can use this direct links to the install for each major OS:\n\nMac\nWindows\nLinux platforms\n\n\n\n\nInstall RStudio\nRStudio can be installed from the RStudio website.\nhttp://www.rstudio.com/\nRStudio can be downloaded for all platforms at the link below\nhttps://rstudio.com/products/rstudio/download/\n\n\n\nInstall required R packages\nR Packages can be installed from the course package or from CRAN/Bioconductor. These commands should be written into the R console. Once R and RStudio is installed, you can copy and paste these install commands into lower left pane of RStudio which should be labelled “Console”. If you run into any errors, do this one line at a time.\n\nFrom the course package\ninstall.packages('BiocManager')\ninstall.packages('remotes')\nBiocManager::install('RockefellerUniversity/RU_course_template',subdir='MyCoursePackage')\n\n\nFrom CRAN and Bioconductor\ninstall.packages('BiocManager')\nBiocManager::install('methods')\nBiocManager::install('ggplot2')\nBiocManager::install('rmarkdown')\nBiocManager::install('knitr')\nBiocManager::install('testthat')\nBiocManager::install('yaml')\n\n\n\nDownload the material\nDownload the material"
+    "text": "Setting up\n\n\nSystem Requirements\n\n\nInstall R\nR can be installed from the R-project website.\nThe R website can be found here http://www.r-project.org/. This website has all the latest information about R updates, conferences and installation\nYou can use this direct links to the install for each major OS:\n\nMac\nWindows\nLinux platforms\n\n\n\n\nInstall RStudio\nRStudio can be installed from the RStudio website.\nhttp://www.rstudio.com/\nRStudio can be downloaded for all platforms at the link below\nhttps://rstudio.com/products/rstudio/download/\n\n\n\nInstall required R packages\nR Packages can be installed from the course package or from CRAN/Bioconductor. These commands should be written into the R console. Once R and RStudio is installed, you can copy and paste these install commands into lower left pane of RStudio which should be labelled “Console”. If you run into any errors, do this one line at a time.\n\nFrom the course package\ninstall.packages('BiocManager')\ninstall.packages('remotes')\nBiocManager::install('RockefellerUniversity/RU_course_template',subdir='MyCoursePackage')\n\n\nFrom CRAN and Bioconductor\ninstall.packages('BiocManager')\nBiocManager::install('methods')\nBiocManager::install('ggplot2')\nBiocManager::install('rmarkdown')\nBiocManager::install('knitr')\nBiocManager::install('testthat')\nBiocManager::install('yaml')\n\n\nWith Docker (reproducible environment)\nFor an environment matching the one this course was built and tested against, use the Bioconductor Docker image, pinned to the Bioconductor release used at compile time. Docker must be installed; run this in a terminal:\ndocker run -e PASSWORD=changeme -p 8787:8787 bioconductor/bioconductor_docker:RELEASE_3_23\nThen open http://localhost:8787 (username rstudio, password changeme) and install the course in the RStudio console:\ninstall.packages('BiocManager')\nBiocManager::install('RockefellerUniversity/RU_course_template', subdir='MyCoursePackage')\n\n\n\nDownload the material\nDownload the material"
   },
   {
     "objectID": "index.html#the-presentations",
