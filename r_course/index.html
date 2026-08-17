@@ -265,7 +265,7 @@ ul.task-list li input[type="checkbox"] {
 <h5 class="anchored" data-anchor-id="from-the-course-package">From the course package</h5>
 <pre><code>install.packages('BiocManager')
 install.packages('remotes')
-BiocManager::install('RockefellerUniversity/RU_course_template',subdir='MyCoursePackage')</code></pre>
+BiocManager::install('RockefellerUniversity/RU_course_template')</code></pre>
 </section>
 <section id="from-cran-and-bioconductor" class="level5">
 <h5 class="anchored" data-anchor-id="from-cran-and-bioconductor">From CRAN and Bioconductor</h5>
@@ -283,7 +283,7 @@ BiocManager::install('yaml')</code></pre>
 <pre><code>docker run -e PASSWORD=changeme -p 8787:8787 bioconductor/bioconductor_docker:RELEASE_3_23</code></pre>
 <p>Then open <a href="http://localhost:8787" class="uri">http://localhost:8787</a> (username <code>rstudio</code>, password <code>changeme</code>) and install the course in the RStudio console:</p>
 <pre><code>install.packages('BiocManager')
-BiocManager::install('RockefellerUniversity/RU_course_template', subdir='MyCoursePackage')</code></pre>
+BiocManager::install('RockefellerUniversity/RU_course_template')</code></pre>
 </section>
 </section>
 <section id="download-the-material" class="level4">
