@@ -176,19 +176,9 @@ jobs:
           ## Publish pipeline: reuse freeze for fast push builds; full canary on cron.
           full-rebuild: ${{ github.event_name == 'schedule' }}
 
-      ## Mirror the freshly rendered course into docs/ (the GitHub Pages source).
-      - name: Move to docs
-        run: |
-          ## Clear docs/ first so it is an exact mirror of the fresh r_course/.
-          ## A plain `cp` never removes files, so stale outputs (e.g. the old
-          ## xaringan/rmarkdown site_libs, remark-css, _site.yml) would pile up
-          ## build after build.
-          rm -rf docs
-          mkdir -p docs
-          cp -r r_course/* docs/
-          echo "Mirrored r_course/ into docs/"
-        shell:
-          bash {0}
+      ## No copy step: compileSingleCourseMaterial renders in place into docs/
+      ## (GitHub Pages source), next to the sources, cleaning only the generated
+      ## paths — so docs/ already holds the freshly rendered site.
 
       ## Publish the rebuilt site back to master. Guarded two ways:
       ##  * only on master (never on pull requests) so PRs validate without

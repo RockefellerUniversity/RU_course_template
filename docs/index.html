@@ -227,8 +227,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="course-integrity" class="level2">
 <h2 class="anchored" data-anchor-id="course-integrity">Course Integrity</h2>
-<p><strong>This course is compiled automatically on <em>2026-08-17</em> </strong> <br> <a href="https://github.com/RockefellerUniversity/RU_course_template/actions/workflows/compilation-check.yml"><img src="https://github.com/RockefellerUniversity/RU_course_template/actions/workflows/compilation-check.yml/badge.svg" class="img-fluid" alt="compilation-check"></a></p>
-<p><strong>The course is tested and available on MacOS, Windows and Ubuntu Linux for R version 4.6.1 (2026-06-24)</strong> <br> <a href="https://github.com/RockefellerUniversity/RU_course_template/actions/workflows/OS-check.yaml"><img src="https://github.com/RockefellerUniversity/RU_course_template/actions/workflows/OS-check.yaml/badge.svg" class="img-fluid" alt="OS-check"></a></p>
+<p><strong>This course is compiled automatically on <em>2026-08-18</em> </strong> <br> <a href="https://github.com/RockefellerUniversity/RU_course_template/actions/workflows/compilation-check.yml"><img src="https://github.com/RockefellerUniversity/RU_course_template/actions/workflows/compilation-check.yml/badge.svg" class="img-fluid" alt="compilation-check"></a></p>
+<p><strong>The course is tested and available on MacOS, Windows and Ubuntu Linux for R version 4.3.3 (2024-02-29)</strong> <br> <a href="https://github.com/RockefellerUniversity/RU_course_template/actions/workflows/OS-check.yaml"><img src="https://github.com/RockefellerUniversity/RU_course_template/actions/workflows/OS-check.yaml/badge.svg" class="img-fluid" alt="OS-check"></a></p>
 <p><strong>The course is also tested against every major R release since 3.5 (3.5 → 4.5) on Linux</strong> <br> <a href="https://github.com/RockefellerUniversity/RU_course_template/actions/workflows/legacy-R-check.yaml"><img src="https://github.com/RockefellerUniversity/RU_course_template/actions/workflows/legacy-R-check.yaml/badge.svg" class="img-fluid" alt="legacy-R-check"></a></p>
 <p><br><br></p>
 </section>
@@ -280,7 +280,7 @@ BiocManager::install('yaml')</code></pre>
 <section id="with-docker-reproducible-environment" class="level5">
 <h5 class="anchored" data-anchor-id="with-docker-reproducible-environment">With Docker (reproducible environment)</h5>
 <p>For an environment matching the one this course was built and tested against, use the Bioconductor Docker image, pinned to the Bioconductor release used at compile time. Docker must be installed; run this in a terminal:</p>
-<pre><code>docker run -e PASSWORD=changeme -p 8787:8787 bioconductor/bioconductor_docker:RELEASE_3_23</code></pre>
+<pre><code>docker run -e PASSWORD=changeme -p 8787:8787 bioconductor/bioconductor_docker:RELEASE_3_18</code></pre>
 <p>Then open <a href="http://localhost:8787" class="uri">http://localhost:8787</a> (username <code>rstudio</code>, password <code>changeme</code>) and install the course in the RStudio console:</p>
 <pre><code>install.packages('BiocManager')
 BiocManager::install('RockefellerUniversity/RU_course_template')</code></pre>

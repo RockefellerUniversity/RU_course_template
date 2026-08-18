@@ -1,4 +1,4 @@
-# setwd("/PathToMyDownload/RU_Course_template/r_course")
+# setwd("/PathToMyDownload/RU_Course_template/docs")
 # # e.g. setwd("~/Downloads/Intro_To_R_1Day/r_course")
 
 Table <- read.table("data/readThisTable.csv",sep=",",header=T)

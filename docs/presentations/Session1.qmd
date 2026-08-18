@@ -46,15 +46,15 @@ Or can be downloaded as a zip archive from here.
 
 Once the zip file in unarchived. All presentations as HTML slides and pages, their R code and HTML practical sheets will be available in the directories underneath.
 
-* **r_course/presentations/slides/**
+* **docs/presentations/slides/**
 Presentations as an HTML slide show.
-* **r_course/presentations/singlepage/**
+* **docs/presentations/singlepage/**
 Presentations as an HTML single page.
-* **r_course/presentations/r_code/**
+* **docs/presentations/r_code/**
 R code in presentations.
-* **r_course/exercises/**
+* **docs/exercises/**
 Practicals as HTML pages.
-* **r_course/answers/**
+* **docs/answers/**
 Practicals with answers as HTML pages and R code solutions.
 
 ## Set the Working directory
@@ -68,7 +68,7 @@ You may navigate to the unarchived RU_Course_help folder in the Rstudio menu.
 or in the console.
 
 ```{r setwd_introtoR,eval=F}
-setwd("/PathToMyDownload/RU_Course_template/r_course")
+setwd("/PathToMyDownload/RU_Course_template/docs")
 # e.g. setwd("~/Downloads/Intro_To_R_1Day/r_course")
 ```
 
