@@ -51,6 +51,11 @@ Find these at **`docs/presentations/*.qmd`**.
 Check out `Session1.qmd` for formatting (slide breaks with `---`, two columns,
 section-divider slides, `eval=FALSE` + `load()` for heavy chunks, etc.).
 
+You can **repeat a header** (`## Topic`) across several continuation slides so
+each slide in a section shows its title in the deck — the single page
+automatically collapses those repeats to a single heading (the content flows on
+underneath).
+
 #### Exercises
 Find these at **`docs/exercises/*.qmd`**.
 Check out the example for how the `toMessage` parameter shows/hides solutions
