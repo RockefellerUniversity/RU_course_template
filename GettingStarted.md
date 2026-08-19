@@ -56,6 +56,42 @@ Find these at **`docs/exercises/*.qmd`**.
 Check out the example for how the `toMessage` parameter shows/hides solutions
 (answers vs exercise versions).
 
+## Authoring for RAG
+
+This course material is also used as a knowledge base for a retrieval-augmented
+generation (RAG) system, ingested with the [`ragnar`](https://ragnar.tidyverse.org)
+R package. `ragnar` handles the mechanics — converting pages to markdown,
+heading-aware chunking (each chunk carries its heading trail as context), and
+recording each chunk's source — so good retrieval mostly comes down to **how you
+author** and **what gets ingested**.
+
+**Author so each section stands on its own:**
+
+* **Use a clear heading hierarchy.** Chunks are cut on markdown structure, so
+  your `##`/`###` headings are the chunk boundaries — one idea per section with a
+  descriptive title.
+* **Keep sections self-contained.** Avoid references like "as we saw on the
+  previous slide"; a retrieved chunk is read out of context, so restate or link
+  the point explicitly.
+* **Keep code next to the prose that explains it**, so a single chunk holds both
+  the code and what it does.
+* **Caption figures / add alt text.** Plots render as images and are invisible to
+  text retrieval — a caption is the only thing RAG can index for a figure.
+
+**Ingest the right output.** Point the ingester at the **single-page** renders
+(`docs/presentations/singlepage/*.html`) and the exercise pages — one clean page
+per session, including executed results. Do **not** ingest the reveal.js slide
+decks (`.../slides/*.html`; they inline JS + base64 and convert to noise), the
+purled `.R` (code with no prose), or the site scaffolding (`site_libs/`,
+`index.html`, `releases.html`, `search.json`). Because sources and rendered
+output now live together under `docs/`, select files precisely rather than
+globbing all of `docs/`.
+
+**Version the corpus.** `ragnar` records *where* a chunk came from but not *which
+course version* it is. To keep answers tied to a specific release, ingest the
+material as of each release tag and attach a `version` field to those chunks (see
+the course's Releases page / GitHub releases).
+
 ## Config files
 
 #### DESCRIPTION
