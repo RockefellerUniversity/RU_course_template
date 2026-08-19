@@ -10,9 +10,6 @@ Description: Dependency + system-requirements manifest for the course. The cours
     this thin package exists only to declare the packages the course needs so
     they can be installed and listed on the front page.
 License: GPL (>= 2)
-Depends: methods, ggplot2, rmarkdown
-Suggests: knitr,
-    testthat,
-    yaml
+Depends: methods, ggplot2
 SystemRequirements: R, RStudio
 biocViews: Training

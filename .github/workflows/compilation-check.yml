@@ -196,7 +196,7 @@ jobs:
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config --global user.email "tc.infomatics@gmail.com"
           git config --global http.postBuffer 263112000
-          git add docs
+          git add docs README.md
           if git diff --cached --quiet; then
             echo "No changes to publish."
           else
