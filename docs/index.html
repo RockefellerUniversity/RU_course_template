@@ -242,9 +242,9 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="setting-up">Setting up</h2>
 <p><br></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Manual Install</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Docker</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Manual Install</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Docker</a></li></ul>
 <div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <section id="system-requirements" class="level4">
 <h4 class="anchored" data-anchor-id="system-requirements"><strong>System Requirements</strong></h4>
 </section>
@@ -270,22 +270,25 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="install-required-r-packages" class="level4">
 <h4 class="anchored" data-anchor-id="install-required-r-packages"><strong>Install required R packages</strong></h4>
-<p>R Packages can be installed from the course package <em>or</em> from CRAN/Bioconductor. These commands should be written into the R console. Once R and RStudio is installed, you can copy and paste these install commands into lower left pane of RStudio which should be labelled “Console”. If you run into any errors, do this one line at a time.</p>
-<section id="from-the-course-package" class="level5">
-<h5 class="anchored" data-anchor-id="from-the-course-package">From the course package</h5>
+<p>R Packages can be installed from the course package <em>or</em> from CRAN/Bioconductor. Once R and RStudio is installed, you can copy and paste these install commands into lower left pane of RStudio which should be labelled “Console”. If you run into any errors, do this one line at a time.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">From the course package</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">From CRAN and Bioconductor</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <pre><code>install.packages('BiocManager')
 install.packages('remotes')
 BiocManager::install('RockefellerUniversity/RU_course_template')</code></pre>
-</section>
-<section id="from-cran-and-bioconductor" class="level5">
-<h5 class="anchored" data-anchor-id="from-cran-and-bioconductor">From CRAN and Bioconductor</h5>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <pre><code>install.packages('BiocManager')
 BiocManager::install('methods')
 BiocManager::install('ggplot2')</code></pre>
-</section>
+</div>
+</div>
+</div>
 </section>
 </div>
-<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <p>For an environment matching the one this course was built and tested against, use the Bioconductor Docker image, pinned to the Bioconductor release used at compile time. <a href="https://docs.docker.com/desktop/">Docker must be installed</a>; run this in a terminal:</p>
 <pre><code>docker run -e PASSWORD=changeme -p 8787:8787 bioconductor/bioconductor_docker:RELEASE_3_18</code></pre>
 <p>Then open <a href="http://localhost:8787" class="uri">http://localhost:8787</a> (username <code>rstudio</code>, password <code>changeme</code>) and install the course in the RStudio console:</p>
