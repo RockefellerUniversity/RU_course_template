@@ -45,7 +45,8 @@ Update it as the pipeline evolves.
 
 ### 2. Flatten the structure
 Move content out of the package to the repo top level:
-- [ ] `inst/extdata/presRaw`   → `presentations/`
+- [ ] `inst/extdata/presRaw`   → `notebooks/` (presentation sources; the engine
+      renders into `presentations/`, which becomes output-only)
 - [ ] `inst/doc`               → `exercises/`
 - [ ] `inst/extdata/Descriptions` → `descriptions/`
 - [ ] `inst/extdata/data`      → `data/`

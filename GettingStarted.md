@@ -27,12 +27,13 @@ existing (older, package-based) course onto this pipeline, see
   There are placeholders, examples and formatting guides throughout. Anything
   surrounded by double question marks **`[??]`** is helper text to be replaced.
 
-* **Edit sources, not generated files.** Under `docs/` you edit the `.qmd`/`.Rmd`
-  sources, `data/`, `imgs/` and `_course.yml`. Everything else in `docs/` is
-  regenerated on each build — do not edit it by hand:
-  `presentations/{slides,singlepage,r_code}/`, `exercises/{answers,exercises}/`,
-  `index.html`, `releases.html`, `search.json`, `site_libs/`, and the root
-  `README.md` (which is generated from your Course Overview).
+* **Edit sources, not generated files.** Under `docs/` you edit `notebooks/*.qmd`
+  (the presentations), `exercises/*.qmd`, `descriptions/*.Rmd`, `data/`, `imgs/`
+  and `_course.yml`. Everything else in `docs/` is regenerated on each build — do
+  not edit it by hand: the whole of **`presentations/`** (slides, single pages and
+  extracted code), `exercises/{answers,exercises}/`, `index.html`,
+  `releases.html`, `search.json`, `site_libs/`, and the root `README.md` (which is
+  generated from your Course Overview).
 
 * If you find mistakes, or parts of the template that could be clearer, please
   fork and submit a pull request, or raise an issue.
@@ -47,7 +48,8 @@ Content is authored as **Quarto** documents (`.qmd`). Each presentation renders
 from one source to slides, a single page and downloadable R code.
 
 #### Course slides
-Find these at **`docs/presentations/*.qmd`**.
+Find these at **`docs/notebooks/*.qmd`** (rendered output lands in
+`docs/presentations/`, which you don't edit).
 Check out `Session1.qmd` for formatting (slide breaks with `---`, two columns,
 section-divider slides, `eval=FALSE` + `load()` for heavy chunks, etc.).
 
