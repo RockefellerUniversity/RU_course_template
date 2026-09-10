@@ -165,7 +165,8 @@ format**, so each session renders twice; a committed `_freeze/` makes the second
 pass reuse results. Fine for current content, worth revisiting for heavy courses.
 
 **First step.** Only when a real course actually OOMs — then wrap the per-session
-render in a subprocess and measure.
+render in a subprocess and measure. If the compute is genuinely heavy rather than
+just memory-hungry, jump to item 9 (render on the HPC) instead.
 
 ---
 
@@ -218,3 +219,100 @@ render in a subprocess and measure.
 - **Duplicate chunk label.** `index.qmd` uses the label `showSysInstall` twice
   (course description child, system-requirements child). It renders today, but
   it's fragile if knitr ever enforces unique labels.
+
+---
+
+## 9. Render heavy courses on the HPC
+
+**What.** A path to run expensive computation on the RU SLURM cluster rather than
+a laptop or a ~7 GB GitHub runner — ideally opt-in per chunk, in the same spirit
+as `echo` / `eval`.
+
+**Why.** Genomics material (alignment, counting, large object loads) can't
+realistically execute in CI. Today's workaround is the `eval=FALSE` +
+`load("data/…")` pattern: heavy results are produced by hand, offline, and
+shipped as data files. An HPC path would formalise *where those results come
+from* instead of leaving it manual and undocumented.
+
+**Hard constraint.** GitHub-hosted runners **cannot reach the RU cluster** (no
+network route, no credentials), so an HPC render can never be a step inside the
+Actions build. It has to be an **out-of-band step whose outputs are committed**
+(or attached to a release) and then consumed by ordinary builds. Any design has
+to start from that.
+
+**Three levels, increasing ambition:**
+
+1. **Whole-course render on the cluster.** Submit `compileSingleCourseMaterial()`
+   as a SLURM job using the existing RU tooling (`~/Documents/RU/Analysis/HPC`,
+   the `rocky9/` templates, `run_qmd_*` + `Herper::local_CondaEnv`; see the
+   `ru-hpc-slurm` skill). Simplest, and sufficient if a course is heavy overall.
+2. **Per-chunk offload.** Worth knowing: a chunk *option* alone can't do this —
+   knitr has no "evaluate this elsewhere" hook. It needs either a custom engine
+   (`knitr::knit_engines$set(hpc = …)`) that submits the chunk body and returns
+   captured output, or `future.batchtools` with the rocky9 SLURM templates used
+   explicitly inside the chunk. Because the job runs in a **separate R session**,
+   such chunks need explicit disk-based inputs/outputs rather than shared
+   in-memory state — which is exactly the existing `load()` pattern, so the
+   content style already fits.
+3. **Wire it to caching.** Have the expensive results land in `_freeze/` (or
+   `data/`) so ordinary CI builds never re-execute them. This is the same
+   underlying problem as the freeze work in item 7 — compute once, reuse
+   everywhere — and the two should be designed together. See also item 6
+   (subprocess isolation) for the lighter-weight, same-machine variant.
+
+**Reproducibility note.** Results computed in an HPC conda env differ from CI's
+Bioconductor docker; capture `sessionInfo()` alongside them and be explicit about
+which environment produced the published output.
+
+**First step.** Take the heaviest real course, render it end to end on the cluster
+with the existing `run_qmd_*` runner (level 1), and see whether per-chunk offload
+is actually needed before building it.
+
+---
+
+## 10. Managing git churn
+
+**The problem.** We commit generated output, so the repo grows monotonically:
+- rendered decks and pages are **self-contained** (`embed-resources: true`), so
+  each is multi-MB with base64-inlined assets, and *every* rebuild rewrites them;
+- an `Autobuild` commit lands on **every push** — including the one the publish
+  step itself pushes;
+- adopting a committed `_freeze/` (item 7) would add cached figure PNGs that
+  churn on every re-execution.
+
+Git keeps every version of all of that, so history grows considerably faster than
+the content does. It's tolerable on this template; it's the thing to get right
+*before* migrating large, plot-heavy courses.
+
+**Options, cheapest to most structural:**
+
+1. **Cut pointless rebuilds** — `paths-ignore` for `docs/**` and `**.md`
+   (item 7). Kills the self-triggered rebuild and doc-only churn. Worth doing
+   regardless of what else we choose.
+2. **Publish on release, not on every push.** Commit rendered `docs/` only when
+   tagging. Churn drops to one commit per release, the committed site always
+   corresponds to a released version, and the release-driven RAG ingest (item 2)
+   gets exactly what it needs — it also dissolves the "tag after the build"
+   ordering trap. Cost: the committed site lags master between releases.
+3. **Deploy Pages from Actions** (`actions/deploy-pages`) instead of from a
+   committed folder. `docs/` never enters git, so build churn goes to **zero**.
+   Cost: a repo download no longer contains ready-made HTML — mitigate by
+   attaching a built-site ZIP as a **release asset**, so downloads still get
+   rendered material.
+4. **Drop `embed-resources` for the decks.** Assets get shared instead of
+   base64-duplicated into every file, cutting committed volume substantially.
+   Cost: decks stop being individually shareable/self-contained, which was a
+   deliberate earlier decision — a real trade, not a free win.
+5. **Git LFS** for rendered HTML/figures. Keeps clones lean but adds quota and
+   workflow friction; probably not worth it here.
+6. **Last resort:** history rewrite or a fresh start if a course repo becomes
+   unusable.
+
+**Recommended combination.** Do (1) now. Then (3) for the live site plus
+(2)/release assets for downloadable material: that yields an always-current
+published site, zero build churn in git, and a clean per-release snapshot serving
+both students and the RAG corpus.
+
+**First step.** Measure before optimising — check `.git` size and per-build growth
+on this template and on the largest real course, so the decision is driven by
+actual numbers rather than instinct.
