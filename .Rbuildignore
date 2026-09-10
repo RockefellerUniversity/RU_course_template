@@ -19,3 +19,5 @@
 ^link-check-report\.tsv$
 ^\.DS_Store$
 ^GettingStarted\.md$
+^MIGRATION\.md$
+^ROADMAP\.md$
