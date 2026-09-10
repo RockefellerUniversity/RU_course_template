@@ -174,8 +174,24 @@ render in a subprocess and measure.
 - **Promote non-blocking legs.** `legacy-R-check` R 3.5/3.6/4.0 are
   `allow-failure: true` (documenting the R 4.1 floor). Some now-passing legs
   could become gating for a stronger signal.
-- **Per-course `_freeze/`.** Commit frozen results once content stabilises, so
-  editing one session re-executes only that session locally *and* in CI.
+- **Per-course `_freeze/` — currently a hole in a documented feature.** The plan
+  is that a course commits its `_freeze/` so an edit re-executes only the changed
+  session, locally *and* in CI. The engine *honours* a committed freeze (it copies
+  `contentDir/_freeze` into the build tree), but the build runs in a `tempfile()`
+  directory that is deleted on exit, so the freeze Quarto **writes** during a build
+  is discarded — nothing in the pipeline can ever produce or refresh one.
+  **Fix:** copy `pathToPres/_freeze` back to `contentDir/_freeze` after rendering.
+  Then decide whether to commit it, weighing the payoff (fast rebuilds) against
+  git churn — the cached figures are binaries and every re-execution rewrites
+  them. Note a committed freeze publishes *whoever rendered it*'s results, which
+  is why the canary legs (OS-check, legacy-R-check, the cron) force
+  `full-rebuild: true`.
+- **Skip pointless rebuilds.** The build workflows have no `paths` filter, so
+  every push to master triggers a full render — including the `Autobuild` commit
+  the publish step itself pushes (that rebuild produces no changes and exits via
+  the "No changes to publish" guard, but still burns a full run). A
+  `paths-ignore` for `docs/**` and `**.md` would cut the wasted builds; worth
+  doing given the Actions quota pressure we hit.
 - **Link-check policy.** The check now fails the run on **any** broken link. If
   the known-broken links (item 8) are kept long-term, consider an ignore-list so
   the gate reds only on *new* breakage rather than sitting permanently red.
