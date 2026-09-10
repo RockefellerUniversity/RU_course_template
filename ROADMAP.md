@@ -175,7 +175,8 @@ just memory-hungry, jump to item 9 (render on the HPC) instead.
 - **Promote non-blocking legs.** `legacy-R-check` R 3.5/3.6/4.0 are
   `allow-failure: true` (documenting the R 4.1 floor). Some now-passing legs
   could become gating for a stronger signal.
-- **Per-course `_freeze/` — currently a hole in a documented feature.** The plan
+- **Per-course `_freeze/` — NEAR-TERM; a hole in a documented feature, and the
+  blocker for HPC rendering (item 9).** The plan
   is that a course commits its `_freeze/` so an edit re-executes only the changed
   session, locally *and* in CI. The engine *honours* a committed freeze (it copies
   `contentDir/_freeze` into the build tree), but the build runs in a `tempfile()`
@@ -270,37 +271,58 @@ to start from that.
 Bioconductor docker; capture `sessionInfo()` alongside them and be explicit about
 which environment produced the published output.
 
-**Conditions that make the model work** (each is a real dependency, not a detail):
+### Settled design decisions
 
-- **The `_freeze` copy-back is a hard prerequisite.** Today the build runs in a
-  deleted `tempfile()` dir, so the cache an HPC render produces is thrown away
-  (item 7). Until that's fixed there is nothing to push, and the whole model is
-  blocked on it.
-- **Editing a source invalidates that document's freeze.** With `freeze: auto`,
-  CI will then try to execute the changed session itself — which on a heavy
-  course means a slow build or an OOM. The discipline is therefore *content edit
-  → re-render on HPC → push*. The failure mode is at least self-announcing (a red
-  build tells you the HPC step was skipped). A per-course `freeze: true` would
-  stop CI ever executing, at the cost of silently publishing stale results.
-- **⚠ It conflicts with the full-rebuild canaries.** `OS-check` and
-  `legacy-R-check` pass `full-rebuild: true` always, and the quarterly cron does
-  too — that deliberately *deletes* the freeze to prove the code really runs. On
-  an HPC-rendered course those legs would attempt the heavy compute in CI and
-  fail. Heavy courses will need those canaries disabled, or scoped to a light
-  subset. Worth deciding deliberately: it trades away the "does this still
-  execute?" signal, which is the main thing those jobs exist for.
-- **The HPC run pays double execution.** Quarto's knitr engine executes once per
-  output format, and (per the migration finding) freeze did not dedupe across the
-  two separate revealjs/html renders — so each session executes twice on the
-  cluster. Cheap to accept there, but size the job accordingly.
-- **Decide what the regenerated intermediates cost.** If the HPC run remakes
-  large intermediate data, committing it feeds straight into the churn problem —
-  see item 10 for whether those belong in git, in a release asset, or ignored.
+- **An `hpc` chunk option, plus a render-mode flag.** Mark the expensive chunks
+  (`hpc=TRUE`) and let the render mode decide whether they run: only an HPC
+  render evaluates them; every other render (local, CI, canaries) skips them.
+  Implement with a knitr **option hook**, which can rewrite one option based on
+  another — roughly:
+  ```r
+  knitr::opts_hooks$set(hpc = function(options) {
+    if (isTRUE(options$hpc) && !isTRUE(getOption("course.hpc", FALSE)))
+      options$eval <- FALSE
+    options
+  })
+  ```
+  The engine sets `course.hpc` (or an equivalent param) for the HPC render only.
+  Most courses will never mark a chunk, so they are unaffected.
+- **This removes the canary conflict.** `OS-check`, `legacy-R-check` and the cron
+  can keep `full-rebuild: true`: they still execute all the *light* code across
+  OS/R versions and simply never attempt the heavy chunks. The "does this still
+  run?" signal survives for everything that can run in CI.
+- **Per-format double execution on the cluster is accepted.**
 
-**First step.** Fix the `_freeze` copy-back (item 7), then render one real course
-end to end on the cluster with the existing `run_qmd_*` runner, commit the cache,
-and confirm a CI build reuses it without executing. That single loop proves or
-disproves the whole model before any per-chunk machinery is worth building.
+### Open issue to resolve first
+
+**Freeze invalidates per *document*, not per chunk.** Quarto hashes the whole
+`.qmd`, so *any* edit — even a typo in prose — invalidates that session's entire
+cache. So "edits that don't touch the heavy sections are fine" only holds if the
+heavy results are stored somewhere other than the freeze. If they live *only* in
+the freeze, a trivial prose edit makes CI re-execute the document with the heavy
+chunks disabled and publish a page **silently missing those results** — a green
+build with incomplete output, which is the worst failure mode.
+
+Two ways out:
+
+1. **Persist heavy results to files** — the existing `eval=FALSE` + `load("data/…")`
+   pattern, now automated: the `hpc=TRUE` chunk computes *and saves*, a normal
+   chunk loads. Downstream output is then correct regardless of freeze state, and
+   freeze becomes a pure speed optimisation rather than a correctness dependency.
+   **Recommended** — it also matches how the courses are already written.
+2. **Guard it** — make the render fail loudly when a heavy chunk is skipped and no
+   cached or persisted result exists, so an incomplete page can never publish.
+
+Worth doing (2) even alongside (1), as a backstop.
+
+**Also.** If the HPC run remakes large intermediate data, committing it feeds
+straight into the churn problem — see item 10 for whether those belong in git, a
+release asset, or ignored.
+
+**First step.** Fix the `_freeze` copy-back (item 7 — **near-term**), then render
+one real course end to end on the cluster with the existing `run_qmd_*` runner,
+commit the cache, and confirm a CI build reuses it without executing. That single
+loop proves or disproves the model before any per-chunk machinery is built.
 
 ---
 
