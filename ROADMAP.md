@@ -225,8 +225,14 @@ just memory-hungry, jump to item 9 (render on the HPC) instead.
 ## 9. Render heavy courses on the HPC
 
 **What.** A path to run expensive computation on the RU SLURM cluster rather than
-a laptop or a ~7 GB GitHub runner — ideally opt-in per chunk, in the same spirit
-as `echo` / `eval`.
+a laptop or a ~7 GB GitHub runner.
+
+**Intended model (the target design).** An **HPC render** alongside the existing
+local render: on the cluster the course renders with *everything executed* — all
+chunks run, intermediate files regenerated — and that run's **`_freeze/` cache is
+committed and pushed**. GitHub then never does the heavy work: CI re-renders from
+the frozen results, so pushes stay cheap. In short, **HPC is the execution
+environment and CI is only a formatting pass.**
 
 **Why.** Genomics material (alignment, counting, large object loads) can't
 realistically execute in CI. Today's workaround is the `eval=FALSE` +
@@ -264,9 +270,37 @@ to start from that.
 Bioconductor docker; capture `sessionInfo()` alongside them and be explicit about
 which environment produced the published output.
 
-**First step.** Take the heaviest real course, render it end to end on the cluster
-with the existing `run_qmd_*` runner (level 1), and see whether per-chunk offload
-is actually needed before building it.
+**Conditions that make the model work** (each is a real dependency, not a detail):
+
+- **The `_freeze` copy-back is a hard prerequisite.** Today the build runs in a
+  deleted `tempfile()` dir, so the cache an HPC render produces is thrown away
+  (item 7). Until that's fixed there is nothing to push, and the whole model is
+  blocked on it.
+- **Editing a source invalidates that document's freeze.** With `freeze: auto`,
+  CI will then try to execute the changed session itself — which on a heavy
+  course means a slow build or an OOM. The discipline is therefore *content edit
+  → re-render on HPC → push*. The failure mode is at least self-announcing (a red
+  build tells you the HPC step was skipped). A per-course `freeze: true` would
+  stop CI ever executing, at the cost of silently publishing stale results.
+- **⚠ It conflicts with the full-rebuild canaries.** `OS-check` and
+  `legacy-R-check` pass `full-rebuild: true` always, and the quarterly cron does
+  too — that deliberately *deletes* the freeze to prove the code really runs. On
+  an HPC-rendered course those legs would attempt the heavy compute in CI and
+  fail. Heavy courses will need those canaries disabled, or scoped to a light
+  subset. Worth deciding deliberately: it trades away the "does this still
+  execute?" signal, which is the main thing those jobs exist for.
+- **The HPC run pays double execution.** Quarto's knitr engine executes once per
+  output format, and (per the migration finding) freeze did not dedupe across the
+  two separate revealjs/html renders — so each session executes twice on the
+  cluster. Cheap to accept there, but size the job accordingly.
+- **Decide what the regenerated intermediates cost.** If the HPC run remakes
+  large intermediate data, committing it feeds straight into the churn problem —
+  see item 10 for whether those belong in git, in a release asset, or ignored.
+
+**First step.** Fix the `_freeze` copy-back (item 7), then render one real course
+end to end on the cluster with the existing `run_qmd_*` runner, commit the cache,
+and confirm a CI build reuses it without executing. That single loop proves or
+disproves the whole model before any per-chunk machinery is worth building.
 
 ---
 
