@@ -172,31 +172,38 @@ just memory-hungry, jump to item 9 (render on the HPC) instead.
 
 ## 7. CI hardening
 
-- **Promote non-blocking legs.** `legacy-R-check` R 3.5/3.6/4.0 are
-  `allow-failure: true` (documenting the R 4.1 floor). Some now-passing legs
-  could become gating for a stronger signal.
-- **Per-course `_freeze/` — NEAR-TERM; a hole in a documented feature, and the
-  blocker for HPC rendering (item 9).** The plan
-  is that a course commits its `_freeze/` so an edit re-executes only the changed
-  session, locally *and* in CI. The engine *honours* a committed freeze (it copies
-  `contentDir/_freeze` into the build tree), but the build runs in a `tempfile()`
-  directory that is deleted on exit, so the freeze Quarto **writes** during a build
-  is discarded — nothing in the pipeline can ever produce or refresh one.
-  **Fix:** copy `pathToPres/_freeze` back to `contentDir/_freeze` after rendering.
-  Then decide whether to commit it, weighing the payoff (fast rebuilds) against
-  git churn — the cached figures are binaries and every re-execution rewrites
-  them. Note a committed freeze publishes *whoever rendered it*'s results, which
-  is why the canary legs (OS-check, legacy-R-check, the cron) force
-  `full-rebuild: true`.
-- **Skip pointless rebuilds.** The build workflows have no `paths` filter, so
-  every push to master triggers a full render — including the `Autobuild` commit
-  the publish step itself pushes (that rebuild produces no changes and exits via
-  the "No changes to publish" guard, but still burns a full run). A
-  `paths-ignore` for `docs/**` and `**.md` would cut the wasted builds; worth
-  doing given the Actions quota pressure we hit.
+- **Per-course `_freeze/` — done, and now ON.** The engine discarded any
+  `_freeze/` Quarto wrote during a build (rendered in a `tempfile()` dir
+  deleted on exit) — fixed by copying `pathToPres/_freeze` back to
+  `contentDir/_freeze` after rendering (compileCourses@74b5291). **Decided:**
+  commit it. `compilation-check.yml` already reuses freeze on normal pushes
+  and forces a full rebuild only on the scheduled canary
+  (`full-rebuild: ${{ github.event_name == 'schedule' }}`); `OS-check` and
+  `legacy-R-check` always force a full rebuild unconditionally (they're
+  cross-platform/cross-R-version execution canaries, not speed optimizations,
+  and a committed freeze publishes *whoever rendered it*'s results, which
+  isn't the point of those legs). This was also the explicit blocker for HPC
+  rendering (item 9) — now clear.
+- **Skip pointless rebuilds — done.** `paths-ignore` for the generated subset
+  of `docs/` and `**.md`, on both `push` and `pull_request`, across all three
+  build workflows. Kills the self-triggered `Autobuild` rebuild and doc-only
+  churn.
+- **Promote non-blocking legs — attempted, not resolved.** `legacy-R-check`
+  R 3.5/3.6/4.0 are `allow-failure: true`. R 4.1–4.5 now pass (were blocked by
+  a missing `pkgload` dependency, fixed). R 3.5/3.6 were investigated further:
+  R 3.5 fails downloading the engine from GitHub's API even after forcing
+  `options(download.file.method = "libcurl")` — likely a deeper OpenSSL/TLS
+  issue in that R build itself, not fixable via an R-level option. R 3.6 fails
+  compiling `testthat` from source (Ubuntu 22.04's glibc made `SIGSTKSZ` a
+  runtime call, breaking `testthat`'s old vendored Catch header) even after
+  excluding `Suggests` from the dependency install — meaning `testthat` is
+  likely a genuine (non-`Suggests`) dependency of that old 2020-snapshot
+  `isoband`, not something excludable. Both remain non-blocking; left for a
+  deeper dig later.
 - **Link-check policy.** The check now fails the run on **any** broken link. If
-  the known-broken links (item 8) are kept long-term, consider an ignore-list so
-  the gate reds only on *new* breakage rather than sitting permanently red.
+  the known-broken links (item 8, now fixed except the intentional test-link
+  demo) are kept long-term, consider an ignore-list so the gate reds only on
+  *new* breakage rather than sitting permanently red.
 
 ---
 

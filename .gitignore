@@ -5,9 +5,3 @@
 .DS_Store
 .gitignore
 r_course/
-
-## Not committed yet — whether to commit a freeze cache is an open decision
-## (ROADMAP item 7 / ADR-0001), not something to fall into by accident via the
-## Autobuild publish step's broad `git add docs`. Remove this line if/when
-## that decision changes.
-docs/_freeze/
