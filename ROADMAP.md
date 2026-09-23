@@ -188,18 +188,32 @@ just memory-hungry, jump to item 9 (render on the HPC) instead.
   of `docs/` and `**.md`, on both `push` and `pull_request`, across all three
   build workflows. Kills the self-triggered `Autobuild` rebuild and doc-only
   churn.
-- **Promote non-blocking legs — attempted, not resolved.** `legacy-R-check`
-  R 3.5/3.6/4.0 are `allow-failure: true`. R 4.1–4.5 now pass (were blocked by
-  a missing `pkgload` dependency, fixed). R 3.5/3.6 were investigated further:
-  R 3.5 fails downloading the engine from GitHub's API even after forcing
-  `options(download.file.method = "libcurl")` — likely a deeper OpenSSL/TLS
-  issue in that R build itself, not fixable via an R-level option. R 3.6 fails
-  compiling `testthat` from source (Ubuntu 22.04's glibc made `SIGSTKSZ` a
-  runtime call, breaking `testthat`'s old vendored Catch header) even after
-  excluding `Suggests` from the dependency install — meaning `testthat` is
-  likely a genuine (non-`Suggests`) dependency of that old 2020-snapshot
-  `isoband`, not something excludable. Both remain non-blocking; left for a
-  deeper dig later.
+- **Promote non-blocking legs — partly done, R 3.5/3.6 abandoned.**
+  `legacy-R-check` R 3.5/3.6/4.0 are `allow-failure: true`. **R 4.1–4.5 now
+  pass** (were blocked by a missing `pkgload` dependency, fixed) — worth
+  promoting to gating. **R 3.5/3.6 were investigated and two rounds of
+  environment-only fixes attempted, neither worked:**
+  - R 3.5 fails downloading the engine from GitHub's API
+    ("cannot open URL ... api.github.com"). Tried forcing
+    `options(download.file.method = "libcurl")` and
+    `CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt` — identical failure
+    both times. Something deeper in that R build's own TLS stack, not fixable
+    via CI config.
+  - R 3.6 fails compiling `testthat` from source (Ubuntu 22.04's glibc made
+    `SIGSTKSZ` a runtime call, breaking `testthat`'s old vendored Catch
+    header). Tried excluding `Suggests` from the dependency install (didn't
+    help — `testthat` is a genuine transitive dependency of the 2020-snapshot
+    `isoband`/`ggplot2`, not optional) and force-installing a current
+    `testthat` from live CRAN before resolving deps (current `testthat`'s own
+    minimum-R floor is now above 3.6, so this silently falls through to the
+    same broken snapshot version).
+
+  Getting either to pass would require a material change (patching
+  `testthat`'s vendored C++, rebuilding `libcurl` against a different TLS
+  backend, or dropping `ggplot2`) — out of scope. **Abandoned**; stay
+  `allow-failure: true` indefinitely unless something changes upstream
+  (a newer PPM snapshot for these R versions, a `testthat`/`isoband` release
+  that still supports R 3.6, etc).
 - **Link-check policy.** The check now fails the run on **any** broken link. If
   the known-broken links (item 8, now fixed except the intentional test-link
   demo) are kept long-term, consider an ignore-list so the gate reds only on
