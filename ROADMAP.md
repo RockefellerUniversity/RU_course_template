@@ -107,8 +107,12 @@ single-tree pipeline, one at a time, following `MIGRATION.md`.
 first, then migrate. Each course is its own effort (content conversion plus the
 layout move).
 
-**First step.** Pick one course, work `MIGRATION.md` end to end, and treat any
-friction as a fix to the guide.
+**In progress.** `Intro_To_R_1Day` is the first course, on its
+`quarto-migration` branch (no PR yet). Friction from it is folded into
+`MIGRATION.md`, and the content defects it turned up are listed under item 11.
+
+**First step (next course).** Pick one course, work `MIGRATION.md` end to end,
+and treat any friction as a fix to the guide.
 
 ---
 
@@ -447,5 +451,98 @@ the skill from it yet):**
   bug — but also needs some way to recognize it *is* a deliberate fixture rather
   than assuming every course review should treat all courses as "production."
 
-**First step.** None yet — let this list accumulate; revisit once item 3 is
-underway and there's a real course to test a first pass against.
+*(2026-09-23, from migrating `Intro_To_R_1Day` — branch `quarto-migration` in
+that repo. Every item below was a real defect found in that course; grouped by
+what a reviewer would have to do to catch it.)*
+
+- **Found only by reading the rendered output (the build was green).**
+  - *Images that silently fail to embed.* Markdown image paths resolve relative
+    to the **notebook's folder**, not the content root, so `![](imgs/x.png)` in
+    `docs/notebooks/` finds nothing. Quarto only warns, and the engine renders
+    with `quiet = TRUE`, so CI stays green while every image is broken. The fix
+    is `../imgs/x.png`, which resolves both in the repo and in the engine's
+    staging tree. Check: every `<img>` in a rendered deck/page has a `data:` src.
+    (Worth an engine guard too: fail, or at least surface, missing-resource
+    warnings.)
+  - *Exercise sheets that show the answers.* Any exercise chunk without
+    `echo=toMessage` prints its solution code on the exercise version. Four of
+    seven exercises leaked answers, one of them (Lists) every one. Check: every
+    non-setup exercise chunk has `echo=toMessage`, unless it's deliberately
+    instructional (e.g. a `setwd()` example or a `?help` prompt).
+  - *Slides that overflow.* The xaringan-era content was sized for a different
+    layout; 7 of 157 Session 1 slides overflowed the 700px revealjs height.
+    Check: measure each slide's `scrollHeight` against `Reveal.getConfig().height`
+    and add `{.scrollable}` or split the slide.
+- **Found only by running the code outside the render.**
+  - *Downloadable `.R` scripts that don't run.* `knitr::purl` wraps an
+    `error=TRUE` chunk in `try({...})`, but it doesn't treat `error=T` the same
+    way, so the purled Session 1 script stopped at its first deliberate-error
+    demo. Check: `sys.source()` each `presentations/r_code/*.R` from `docs/`;
+    chunk options should use literal `TRUE`/`FALSE`.
+  - *Display-only chunks leaking into student code.* A `kable()` table chunk
+    without `purl=FALSE` makes the student script depend on knitr.
+- **Found only by reading answers against their questions.** Things no check can
+  automate:
+  - a "reorder the levels" answer that used `levels<-`, which *renames* the
+    categories;
+  - a "z-score per gene (row)" answer that applied over columns and ignored
+    "absolute";
+  - a function that named its returned `c(sum, multiple)` as
+    `c("multiple","sum")`;
+  - `order=T` silently partial-matching `ordered=`;
+  - `summary()` on a character column (post-R 4.0 `stringsAsFactors`) printing
+    only Length/Class, so the exercise's comparison meant nothing;
+  - `%H` used with `%p` in a 12-hour-clock example.
+
+  A reviewer has to actually run each answer and ask whether its output answers
+  the question as written.
+- **Structure and linking.**
+  - *Exercises missing from `_course.yml`.* The Lists exercise existed and was
+    linked from the slides, but was never listed, so it never rendered. Also,
+    authors wrote `_exercises.html` where the engine writes `_exercise.html`.
+    Check: every `exercises/*.qmd` is listed and vice versa, and every exercise
+    link matches an engine output name.
+  - *Rmarkdown-era self-links.* Absolute
+    `rockefelleruniversity.github.io/.../introToR_Session1.html#Using_variables`
+    links used the old anchor slugs. `link-check` only tests remote URLs for
+    HTTP status, not anchors, so they pass while landing at the top of the page.
+    Convert to relative `#id` links and pin ids on the targeted headings
+    (`## Indexing {#vector-indexing}`) on the *first* occurrence of a repeated
+    header, because the single-page collapse drops the later ones.
+  - *Nested headings defeat the header collapse.* `## A` / `### B` / `## A` /
+    `### B`: the filter only compares with the immediately preceding header, so
+    nothing collapses. Rewrite as one repeated `##` (or improve the filter to
+    track the last header per level).
+  - *Inbound links from other courses.* Other courses deep-link into this one.
+    Output file names are preserved by the migration, but anchors change with
+    the slug scheme, so inbound `#fragment` links need checking from the other
+    side.
+- **Content hygiene.**
+  - *Dead services still cited.* MRAN (retired 2023), old CRAN mirrors,
+    rstudio.com, and Quick-R (now a DataCamp redirect with a sales banner).
+  - *Stale folder names.* `r_course/` still appeared in `setwd()` examples and
+    in the "course materials" listing.
+  - *Unseeded randomness.* `rnorm()` with no `set.seed()` makes every render
+    differ, which churns the freeze and the committed HTML.
+  - *Renders that write into committed folders.* The material writes
+    `data/writeThis*.xlsx`/`.csv` at render time, which round-trips into the
+    committed `docs/data/`; xlsx files embed timestamps, so they change on every
+    build.
+  - *Hidden dependencies.* `tidy = TRUE` needs formatR; this happened to be
+    installed, but nothing declares it.
+- **Not content, but a migration checklist should cover it (now in
+  `MIGRATION.md`).** Old rendered output had case-colliding paths
+  (`conditionsAndLoops_answers.html` vs `ConditionsAndLoops_answers.html`) that
+  leave a permanently dirty tree on macOS. Long-idle course repos have their
+  workflows `disabled_inactivity`. The engine stages only `data/` and `imgs/`,
+  so any other asset folder must move under `data/`. And `link-check` false
+  positives: the front page's `http://localhost:8787` (Docker instructions), plus
+  Cloudflare-protected sites (stackoverflow.com) that return 403 to any
+  non-browser client. Both feed item 7's ignore-list idea.
+
+**First step.** Turn the "found only by …" groups above into the skill's
+passes: rendered-output checks (images, answer leaks, overflow), run checks
+(purled scripts), a read-the-answers pass, and structure/link checks, with the
+hygiene list as a lint pass. Test the first draft against `Intro_To_R_1Day` at
+the commit *before* its content fixes (`f0dfffb`, after the mechanical Quarto
+conversion only), where every defect above is still present.

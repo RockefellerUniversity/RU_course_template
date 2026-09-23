@@ -29,29 +29,53 @@ Update it as the pipeline evolves.
       `::: {.content-visible when-format="html"}` for page-only content.
       **NB:** `content-visible when-format="html"` *also* matches revealjs — use
       `::: {.content-hidden when-format="revealjs"}` to exclude from the deck.
-- [ ] Slide separators: keep bare `---` (a *headingless* slide break in revealjs;
-      renders as `<hr>` on the page). Author continuation slides as one
-      `## Topic` followed by `---` breaks — **do not repeat the header** (so the
-      single page shows it once). Replaces the old duplicate-header munging.
+- [ ] Slide separators: drop the xaringan `---` before each `## Heading`
+      (Quarto starts a slide at every heading); keep bare `---` only as a
+      *headingless* break (renders as `<hr>` on the page). Continuation slides
+      **repeat the header** (`## Topic` … `## Topic`): the single page collapses
+      adjacent repeats. Don't nest a `###` inside repeated `##`s — the collapse
+      only compares with the immediately preceding header, so nothing collapses.
+- [ ] Markdown image paths are resolved **relative to the notebook**, so write
+      `![alt](../imgs/x.png)` (resolves both in `docs/notebooks/` and in the
+      engine's staging tree), not `imgs/x.png`. A wrong path only warns and the
+      engine renders quietly, so the build stays green with broken images —
+      check the rendered deck. Code paths (`read.table("data/..")`) stay
+      relative to the content root. Give every image real alt text/caption.
 - [ ] `.pull-left[` / `.pull-right[` → `::: {.columns}` / `::: {.column width="50%"}`.
 - [ ] `--` incremental pause → `. . .`.
 - [ ] Section-divider slides: `# Title {background-color="#23373B"}` (full-green
       slide), **not** `.inverse`.
 - [ ] Keep classic ```` ```{r} ```` chunk headers so the purled `.R` stays clean;
       keep the `eval=FALSE` + `load("data/...")` heavy-compute pattern.
+- [ ] Chunk options use literal `TRUE`/`FALSE`, not `T`/`F`: `knitr::purl` only
+      wraps `error=TRUE` chunks in `try()`, so `error=T` breaks the downloadable
+      script at the first deliberate error. Display-only chunks (e.g. `kable()`)
+      get `purl=FALSE`.
+- [ ] Rmarkdown-era self-links (absolute `.../singlepage/X.html#Old_Anchor`)
+      → relative `#id` links; pin ids on targeted headings
+      (`## Indexing {#vector-indexing}`, first occurrence only).
 - [ ] Exercises `.Rmd` → `.qmd`. Keep the `params$toMessage` + `echo=toMessage`
       pattern (answers vs exercise). Exercises are **single-page HTML only** — no
       purled `.R`.
 
-### 2. Flatten the structure
-Move content out of the package to the repo top level:
-- [ ] `inst/extdata/presRaw`   → `notebooks/` (presentation sources; the engine
-      renders into `presentations/`, which becomes output-only)
-- [ ] `inst/doc`               → `exercises/`
-- [ ] `inst/extdata/Descriptions` → `descriptions/`
-- [ ] `inst/extdata/data`      → `data/`
-- [ ] `inst/extdata/imgs`      → `imgs/`
-- [ ] `inst/extdata/_course.yml` → `_course.yml` (repo root)
+### 2. Flatten into the single `docs/` tree
+Move content out of the package into `docs/` (sources and rendered site share
+one tree; see `GettingStarted.md`):
+- [ ] First `git rm -r -f` the old generated `docs/` and `r_course/` trees. Old
+      builds can hold **case-colliding paths** (`conditionsAndLoops_answers.html`
+      vs `ConditionsAndLoops_answers.html`) that leave a permanently dirty tree
+      on macOS and block a plain `git rm`.
+- [ ] `inst/extdata/presRaw`   → `docs/notebooks/` (presentation sources; the
+      engine renders into `docs/presentations/`, which is output-only). Keep the
+      file basenames so published URLs (which other courses link to) don't move.
+- [ ] `inst/doc`               → `docs/exercises/`
+- [ ] `inst/extdata/Descriptions` → `docs/descriptions/`
+- [ ] `inst/extdata/data`      → `docs/data/`
+- [ ] `inst/extdata/imgs`      → `docs/imgs/`
+- [ ] Any **other** asset folder (`scripts/`, `ExpressionResults/`, …) →
+      under `docs/data/`: the engine stages only `data/` and `imgs/` into the
+      render tree. Update the paths in the material.
+- [ ] `inst/extdata/_course.yml` → `docs/_course.yml`
 - [ ] `DESCRIPTION`            → repo root
 - [ ] Delete the package wrapper (`R/`, `man/`, `tests/`, `*.Rproj`) and dead
       xaringan CSS (`customCSS/`, `presRaw/*.css`).
@@ -87,9 +111,9 @@ Move content out of the package to the repo top level:
 
 ### 6. Publishing (docs-only)
 - [ ] GitHub Pages source = **`master` / `/docs`**.
-- [ ] `docs/` is the only committed build output. `git add docs` (not
-      `r_course`); the publish step **clears `docs/` before copying** so stale
-      outputs don't accumulate.
+- [ ] `docs/` is the only committed build output. The engine renders **in
+      place** into `docs/`, removing only generated paths before merging the new
+      build, so sources are never touched and stale outputs don't accumulate.
 - [ ] `.gitignore` the ephemeral `r_course/` build folder.
 - [ ] Point in-course "where's the material" references at `docs/…` (not
       `r_course/…`).
@@ -100,8 +124,21 @@ Move content out of the package to the repo top level:
       (canary) via `full-rebuild`.
 
 ### 8. Verify
-- [ ] Local render: `compileCourses::compileSingleCourseMaterial(contentDir=".")`
-      (needs the quarto CLI on PATH); eyeball the site + purled `.R`.
+- [ ] Local render from the repo root:
+      `compileCourses::compileSingleCourseMaterial(contentDir = "docs")`
+      (needs the quarto CLI on PATH; `installPkg = TRUE` installs the thin
+      package over any old installed copy of the course package).
+- [ ] Eyeball the site, and check the things a green build doesn't catch: every
+      image embedded (`data:` src), no slide overflowing its height, exercise
+      sheets show no solution code, and each `presentations/r_code/*.R`
+      `sys.source()`s cleanly from `docs/`.
+- [ ] Run `.github/scripts/link-check.R docs` locally before pushing.
+- [ ] Long-idle course repos have their workflows **`disabled_inactivity`**;
+      re-enable (`gh workflow enable <name>`) or nothing builds.
+- [ ] Build workflows trigger on `master` only; to validate a migration branch
+      before the PR, temporarily add it to `push.branches` in
+      `compilation-check`/`OS-check` (publishing stays master-only), and remove
+      it before opening the PR.
 - [ ] Open a PR: `compilation-check` validates the build (no publish). Merge →
       publishes to `docs/`; `link-check` runs post-merge and flags broken links.
 
@@ -125,10 +162,17 @@ Move content out of the package to the repo top level:
 
 ---
 
-## Pipeline features still in flight (fold in as they land)
-- **#14** Releases summary page (GitHub releases → version/date table, linked
-  from the home page). Needs the releases API + token.
-- **#15** Generate the top-level `README.md` from the Course Overview section.
-- **#16** Trim compile-only deps (`rmarkdown`) from `DESCRIPTION`.
-- **#17** RAG-optimized corpus export (clean markdown/plain-text per item +
-  metadata front-matter / versioning) — *scoping pending*.
+## Pipeline features that change what a migration touches
+All landed; copy their course-side pieces from this template:
+- **Releases page** — the engine builds it; link it from the Course Integrity
+  section of `CourseOverview.Rmd` (`[releases page](releases.html)`).
+- **README from the overview** — the engine writes the root `README.md` from the
+  `## Course Overview` section (up to the next `##`), so keep Course Overview and
+  Course Integrity as separate `##` sections, with the inline-R badges only in
+  the latter.
+- **Thin `DESCRIPTION`** — no compile-only deps (`rmarkdown`, `knitr`).
+- **RAG** — authoring guidance only (`GettingStarted.md` → *Authoring for RAG*);
+  no export step.
+
+For planned work see `ROADMAP.md`; migration defects worth a reviewer's eye are
+collected under its item 11.
