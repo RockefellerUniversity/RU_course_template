@@ -73,6 +73,11 @@ jobs:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       GITHUB_TOKEN: ${{ secrets.GHTOKEN2 }}
       GITHUB_PAT: ${{ secrets.GHTOKEN2 }}
+      ## R <= 3.5's bundled libcurl sometimes can't locate a CA store on its
+      ## own, turning a routine cert-chain check into a generic "cannot open
+      ## URL" failure against GitHub's API. Point it at the system's modern
+      ## bundle explicitly; harmless no-op on every other leg.
+      CURL_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
 
     steps:
       - uses: actions/checkout@v4
@@ -141,6 +146,16 @@ jobs:
       ## blocker below R 4.1).
       - name: Install dependencies
         run: |
+          ## The dated PPM snapshot's testthat predates the fix for glibc
+          ## >= 2.34 making SIGSTKSZ a runtime call (breaks its vendored Catch
+          ## header when compiled from source, e.g. as isoband's dependency
+          ## below). Pull a current testthat from live CRAN first, bypassing
+          ## the snapshot for this one package; a no-op if R can't satisfy a
+          ## current testthat's own version floor.
+          tryCatch(
+            install.packages("testthat", repos = "https://cran.r-project.org"),
+            error = function(e) message("Current testthat unavailable for this R version: ", conditionMessage(e))
+          )
           remotes::install_deps(".",dependencies = NA)
           remotes::install_cran("BiocManager")
         shell: Rscript {0}
