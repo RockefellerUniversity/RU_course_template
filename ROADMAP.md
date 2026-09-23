@@ -395,3 +395,36 @@ likeliest near-term candidates for option 6 once migrated.
 already-committed FASTQ files, and what size ceiling should guide new/updated
 course sample data ("small dummy files" was the intent; the measured files are
 40-70MB). Addressed case-by-case as each course migrates — see ADR-0001.
+
+---
+
+## 11. A skill that reviews course content
+
+**What.** A Claude Code skill that reviews a course (new or being migrated) against
+the design principles this pipeline has accumulated — authoring conventions,
+structural expectations, the things that are easy to get subtly wrong when
+writing or migrating a session. Distinct from the automated CI checks (link-check,
+compilation-check, etc.): this is for the things a human reviewer would catch by
+reading the content, not by running it.
+
+**Why.** By the time item 3 (migrating real courses) is underway, there will be a
+recurring need to sanity-check a course's content against everything decided
+along the way — conventions that live in `GettingStarted.md`, `MIGRATION.md`,
+ADRs, and this roadmap, but that nobody will re-read in full for every course.
+
+**Not started.** No design work done yet — this entry exists to hold the idea and
+collect raw material for it as we notice things worth remembering, rather than
+trying to design the skill up front.
+
+**Notes toward it (running list — add to this as things come up, don't design
+the skill from it yet):**
+
+- *(2026-09-23, from item 8 link-check cleanup)* Distinguish an intentionally
+  planted test fixture (e.g. the deliberately-broken `github.com/rafelleruniversity`
+  link used to prove `link-check` actually catches breakage) from a genuine
+  authoring error. A course-content reviewer needs to not flag the former as a
+  bug — but also needs some way to recognize it *is* a deliberate fixture rather
+  than assuming every course review should treat all courses as "production."
+
+**First step.** None yet — let this list accumulate; revisit once item 3 is
+underway and there's a real course to test a first pass against.
