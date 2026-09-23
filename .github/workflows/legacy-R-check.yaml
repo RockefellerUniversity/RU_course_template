@@ -90,13 +90,26 @@ jobs:
           repo <- "https://packagemanager.posit.co/cran/__linux__/jammy/${{ matrix.config.snapshot }}"
           cat(sprintf("options(repos = c(CRAN = '%s'))\n", repo),
               file = "~/.Rprofile", append = TRUE)
+          ## R <= 3.5 doesn't default to the libcurl download backend, so its
+          ## HTTPS handshake against api.github.com (TLS 1.2+) fails with
+          ## "cannot open URL" even though the runner's libcurl is modern.
+          ## Force it explicitly; a no-op on newer R where it's already default.
+          cat('options(download.file.method = "libcurl")\n',
+              file = "~/.Rprofile", append = TRUE)
           cat("Using CRAN snapshot:", repo, "\n")
         shell: Rscript {0}
 
       - name: Query dependencies
         run: |
           install.packages('remotes')
-          saveRDS(remotes::dev_package_deps(".",dependencies = TRUE), ".github/depends.Rds", version = 2)
+          ## dependencies = NA (Depends/Imports/LinkingTo only, no Suggests):
+          ## rendering a course never needs a package's own test framework, and
+          ## pulling in Suggests transitively drags in testthat, which fails to
+          ## compile from source on this Ubuntu 22.04 + old-R combination
+          ## (SIGSTKSZ is no longer a compile-time constant in glibc >= 2.34,
+          ## breaking testthat's vendored Catch header) whenever a binary isn't
+          ## available for a given old-R/snapshot pairing.
+          saveRDS(remotes::dev_package_deps(".",dependencies = NA), ".github/depends.Rds", version = 2)
           writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}
 
@@ -128,7 +141,7 @@ jobs:
       ## blocker below R 4.1).
       - name: Install dependencies
         run: |
-          remotes::install_deps(".",dependencies = TRUE)
+          remotes::install_deps(".",dependencies = NA)
           remotes::install_cran("BiocManager")
         shell: Rscript {0}
 
