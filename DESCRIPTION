@@ -1,7 +1,7 @@
 Package: MyCoursePackage
 Type: Package
 Title: Template Package for Courses
-Version: 0.1.1
+Version: 2.0.0
 Author: Matt Paul and Thomas Carroll.
 Maintainer: Thomas Carroll <tc.infomatics@gmail.com>
 Description: Dependency + system-requirements manifest for the course. The course
@@ -10,9 +10,6 @@ Description: Dependency + system-requirements manifest for the course. The cours
     this thin package exists only to declare the packages the course needs so
     they can be installed and listed on the front page.
 License: GPL (>= 2)
-Depends: methods, ggplot2, rmarkdown
-Suggests: knitr,
-    testthat,
-    yaml
+Depends: methods, ggplot2
 SystemRequirements: R, RStudio
 biocViews: Training

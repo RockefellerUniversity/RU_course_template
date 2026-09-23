@@ -33,9 +33,27 @@ on:
   push:
     branches:
       - master
+    ## Skip commits that only touch generated site output or prose docs — e.g.
+    ## the Autobuild publish commit itself, which would otherwise trigger a full
+    ## rebuild that produces no changes and exits via the "nothing to publish"
+    ## guard. Course *sources* (docs/notebooks, docs/exercises, docs/data, …)
+    ## are NOT covered here, so real content edits still rebuild.
+    paths-ignore: &generated-paths
+      - "docs/presentations/**"
+      - "docs/exercises/answers/**"
+      - "docs/exercises/exercises/**"
+      - "docs/index.html"
+      - "docs/releases.html"
+      - "docs/site_libs/**"
+      - "docs/search.json"
+      - "docs/logo.svg"
+      - "docs/_site.yml"
+      - "docs/.quarto/**"
+      - "**.md"
   pull_request:
     branches:
       - master
+    paths-ignore: *generated-paths
   schedule:
     ## Quarterly (11th of Jan/Apr/Jul/Oct, 07:01) — canary against package drift.
     - cron: "1 7 11 */3 *"
@@ -176,14 +194,9 @@ jobs:
           ## Publish pipeline: reuse freeze for fast push builds; full canary on cron.
           full-rebuild: ${{ github.event_name == 'schedule' }}
 
-      ## Mirror the freshly rendered course into docs/ (the GitHub Pages source).
-      - name: Move to docs
-        run: |
-          mkdir -p docs
-          cp -r  r_course/* docs/
-          echo "Copied to docs"
-        shell:
-          bash {0}
+      ## No copy step: compileSingleCourseMaterial renders in place into docs/
+      ## (GitHub Pages source), next to the sources, cleaning only the generated
+      ## paths — so docs/ already holds the freshly rendered site.
 
       ## Publish the rebuilt site back to master. Guarded two ways:
       ##  * only on master (never on pull requests) so PRs validate without
@@ -201,7 +214,7 @@ jobs:
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config --global user.email "tc.infomatics@gmail.com"
           git config --global http.postBuffer 263112000
-          git add docs r_course
+          git add docs README.md
           if git diff --cached --quiet; then
             echo "No changes to publish."
           else
