@@ -340,35 +340,58 @@ Git keeps every version of all of that, so history grows considerably faster tha
 the content does. It's tolerable on this template; it's the thing to get right
 *before* migrating large, plot-heavy courses.
 
+**Decided — see [ADR-0001](decisions/ADR-0001-accept-committed-render-churn.md).**
+Two hard requirements rule out the options that would actually stop the growth:
+a persistent, retrievable local/GitHub copy of rendered output (not just whatever
+is currently live), and the front-page "Download the material" link, which must
+package rendered HTML + data + code together for fully offline in-class use —
+combined with an authoring cadence where edits continue until the last minute
+before a session and releases are only cut afterward. Given those, **committing
+`docs/` on every real push is accepted as a real cost, not a defect to engineer
+away.**
+
 **Options, cheapest to most structural:**
 
-1. **Cut pointless rebuilds** — `paths-ignore` for `docs/**` and `**.md`
-   (item 7). Kills the self-triggered rebuild and doc-only churn. Worth doing
-   regardless of what else we choose.
-2. **Publish on release, not on every push.** Commit rendered `docs/` only when
-   tagging. Churn drops to one commit per release, the committed site always
-   corresponds to a released version, and the release-driven RAG ingest (item 2)
-   gets exactly what it needs — it also dissolves the "tag after the build"
-   ordering trap. Cost: the committed site lags master between releases.
+1. **Cut pointless rebuilds** — `paths-ignore` for the generated subset of
+   `docs/` and `**.md` (item 7). **Done** — kills the self-triggered rebuild and
+   doc-only churn, with zero effect on freshness (real content changes still
+   rebuild and commit as before). The only lever adopted so far.
+2. **Publish on release, not on every push.** ~~Rejected~~ — doesn't fit the
+   authoring cadence (see above); would leave the site/download stale exactly
+   when it needs to be freshest. See ADR-0001.
 3. **Deploy Pages from Actions** (`actions/deploy-pages`) instead of from a
-   committed folder. `docs/` never enters git, so build churn goes to **zero**.
-   Cost: a repo download no longer contains ready-made HTML — mitigate by
-   attaching a built-site ZIP as a **release asset**, so downloads still get
-   rendered material.
+   committed folder. ~~Rejected~~ — `docs/` never entering git breaks both hard
+   requirements above (no persistent committed copy; the download zip would have
+   source only, no rendered HTML). See ADR-0001.
 4. **Drop `embed-resources` for the decks.** Assets get shared instead of
    base64-duplicated into every file, cutting committed volume substantially.
    Cost: decks stop being individually shareable/self-contained, which was a
-   deliberate earlier decision — a real trade, not a free win.
+   deliberate earlier decision — a real trade. **Left open** as an optional
+   future lever, not decided.
 5. **Git LFS** for rendered HTML/figures. Keeps clones lean but adds quota and
    workflow friction; probably not worth it here.
-6. **Last resort:** history rewrite or a fresh start if a course repo becomes
-   unusable.
+6. **Trim per-repo, on demand — the actual plan for when a repo balloons.**
+   Most existing courses already carry release tags. Rewrite history with
+   `git filter-repo` so each stretch of commits *between* two consecutive
+   release tags collapses to one commit — every tag's tree content stays
+   byte-identical, but the intermediate `Autobuild` churn between releases is
+   discarded — then `git gc --prune=now` and force-push. Real costs: every
+   release tag's *commit* SHA changes even though its content doesn't; existing
+   clones/forks must re-clone, not pull; day-to-day history between releases is
+   permanently lost. Deliberately manual, on-demand, one repo at a time — never
+   scheduled or automated. Apply only when a specific course's `.git` is
+   actually a problem, not preemptively.
 
-**Recommended combination.** Do (1) now. Then (3) for the live site plus
-(2)/release assets for downloadable material: that yields an always-current
-published site, zero build churn in git, and a clean per-release snapshot serving
-both students and the RAG corpus.
+**Measured (2026-09-22/23), for reference.** `.git` objects only, excluding Git
+LFS where present: `RU_course_template` 68M (trivial 2-session template);
+`RU_ATACseq` 488M; `scRNA-seq` 395M; `ATAC.Cut-Run.ChIP` 3.6G; `RU_RNAseq` 5.1G.
+`RU_RNAseq`'s history also carries directly-committed sample FASTQ
+(`ERR458755.fastq.gz` 71MB, `ENCFF332KDA_sampled.fastq.gz` 44MB) and duplicated
+knitr cache blobs (~40-44MB each, same content re-committed multiple times) —
+`RU_RNAseq` and `ATAC.Cut-Run.ChIP` are the current high-water marks and the
+likeliest near-term candidates for option 6 once migrated.
 
-**First step.** Measure before optimising — check `.git` size and per-build growth
-on this template and on the largest real course, so the decision is driven by
-actual numbers rather than instinct.
+**Open, not resolved here.** What (if anything) to do about `RU_RNAseq`'s
+already-committed FASTQ files, and what size ceiling should guide new/updated
+course sample data ("small dummy files" was the intent; the measured files are
+40-70MB). Addressed case-by-case as each course migrates — see ADR-0001.
