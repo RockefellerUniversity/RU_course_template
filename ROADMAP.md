@@ -202,24 +202,24 @@ just memory-hungry, jump to item 9 (render on the HPC) instead.
 
 ## 8. Content and site cleanups
 
-- **The known-broken links.** `link-check` is red by design right now: 14 dead
-  cross-references to `Intro_To_R_1Day/.../introToR_Session1.html` (7 source
-  lines in `docs/notebooks/Session1.qmd` and `Session2.qmd`) plus 2 deliberately
-  planted `github.com/rafelleruniversity` test links. Fix the targets, remove
-  the lines, or ignore-list them — see item 7.
-- **Private-repo badges.** The Course Integrity workflow badges are remote SVGs
-  that only render for a viewer authenticated to the private repo (or once it's
-  public). Not a build problem, but it looks broken to anonymous viewers.
-- **Navbar "Notebooks" menu.** The per-session links now offer four outputs
-  (Slide / Single Page / Code / Notebook) while the navbar has three menus.
-  Adding a Notebooks menu would restore parity.
-- **`_course.yml` format.** The space/comma-delimited encoding of sessions and
-  exercises is terse and easy to get wrong; a structured list was flagged in the
-  original redesign proposal as a lower-risk change to make outside a big
-  migration.
-- **Duplicate chunk label.** `index.qmd` uses the label `showSysInstall` twice
-  (course description child, system-requirements child). It renders today, but
-  it's fragile if knitr ever enforces unique labels.
+- **The known-broken links — done.** The 7 dead cross-reference lines (14
+  broken links) to `Intro_To_R_1Day/.../introToR_Session1.html` in
+  `docs/notebooks/Session1.qmd`/`Session2.qmd` now point to real anchors
+  within this template's own rendered output instead of another course's URL
+  structure, so they can't silently rot the same way again. The 2 deliberately
+  planted `github.com/rafelleruniversity` test links are **kept as-is** — see
+  item 11's notes; they're a working demonstration that `link-check` catches
+  real breakage, not a bug.
+- **Private-repo badges — resolved.** `RU_course_template` is now public, so
+  the Course Integrity badges render normally for everyone; no change needed.
+- **Navbar "Notebooks" menu — done.** Added, matching the four per-session
+  output links (Slide / Single Page / Code / Notebook).
+- **`_course.yml` format — done.** `Presentations` is now a list of per-session
+  entries (`title`/`PresRmd`/`PresOverviewRmd`/`Exercises`), each owning its
+  own exercises explicitly instead of by array position plus comma-grouping.
+  Documented in `GettingStarted.md`.
+- **Duplicate chunk label — done.** `index.qmd`'s two `showSysInstall` chunks
+  renamed to `showCourseDescription` and `showSysReqInstall`.
 
 ---
 
