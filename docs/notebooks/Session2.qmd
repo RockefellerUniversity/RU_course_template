@@ -18,11 +18,11 @@ knitr::opts_chunk$set(echo = TRUE, tidy = T)
 ##  Recap
 
 ?? can add a recap to link to keypoints in first session??
-Session 1 covered introduction to R data types and import/export of data.
+Session 1 covered the material below.
 
-- [Background to R](https://rockefelleruniversity.github.io/Intro_To_R_1Day/r_course/presentations/singlepage/introToR_Session1.html#background-to-r)
-- [Data types in R](https://rockefelleruniversity.github.io/Intro_To_R_1Day/r_course/presentations/singlepage/introToR_Session1.html#data_types_in_r)
-- [Reading and writing in R](https://rockefelleruniversity.github.io/Intro_To_R_1Day/r_course/presentations/singlepage/introToR_Session1.html#reading-and-writing-data-in-r)
+- [Materials](Session1.html#materials)
+- [Course materials](Session1.html#course-materials)
+- [Links](Session1.html#links)
 
 ## Same stuff
 ??More content for second session??

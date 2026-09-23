@@ -67,7 +67,10 @@ Move content out of the package to the repo top level:
       `link-check-report.tsv`, …) so installing pulls only dependencies.
 
 ### 4. `_course.yml`
-- [ ] Update `PresRmd` / `Exercises` / `PresOverviewRmd` entries `.Rmd` → `.qmd`.
+- [ ] Convert to the structured per-session list format (see
+      `GettingStarted.md` → `_course.yml`) if migrating from the old
+      space/comma-delimited encoding, and update `PresRmd` / `Exercises` /
+      `PresOverviewRmd` entries `.Rmd` → `.qmd`.
 
 ### 5. CI / workflows (copy this template's `.github/`)
 - [ ] `.github/actions/compile-course/action.yml` (composite: sets up Quarto,

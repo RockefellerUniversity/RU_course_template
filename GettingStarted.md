@@ -123,12 +123,30 @@ two kinds:
 
 #### _course.yml
 Find this at **`docs/_course.yml`**.
-Lists the names of all the content files. Update the `CourseName` first. If any
-file is renamed from the template, update the `.yml` to match. Order matters, so
-your first session's `.qmd` should be first. Entries are space-separated, except
-exercises: exercises are comma-separated within a session and space-separated
-between sessions (e.g. in the template the first two exercises belong to the first
-session and the third to the final session).
+Lists the names of all the content files. Update `Description.CourseName` first.
+`Presentations` is a **list of sessions**, in the order they should appear (your
+first session's `.qmd` should be first). Each session is an entry with its own
+`title`, `PresRmd`, `PresOverviewRmd`, and `Exercises` (a list of that session's
+exercise `.qmd` files — ownership is explicit, not positional):
+
+```yaml
+Presentations:
+  - title: Session1
+    PresRmd: Session1.qmd
+    PresOverviewRmd: Session1Overview.Rmd
+    Exercises:
+      - MyExercise1.qmd
+      - MyExercise2.qmd
+  - title: Session2
+    PresRmd: Session2.qmd
+    PresOverviewRmd: Session2Overview.Rmd
+    Exercises:
+      - MyExercise3.qmd
+```
+
+If any file is renamed from the template, update this to match. To add a
+session, add another entry to the list; to add an exercise to a session, add
+another line under that session's `Exercises`.
 
 ## .github files for compiling
 
