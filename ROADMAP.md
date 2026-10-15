@@ -218,6 +218,21 @@ just memory-hungry, jump to item 9 (render on the HPC) instead.
   the known-broken links (item 8, now fixed except the intentional test-link
   demo) are kept long-term, consider an ignore-list so the gate reds only on
   *new* breakage rather than sitting permanently red.
+- **Gate OS-check/legacy-R-check on compilation-check succeeding first —
+  investigate, not decided.** If the content is broken, it's almost certainly
+  broken the same way in all 13 OS/R-version legs, not just the reference Bioc
+  docker compilation-check runs in — so a failed compilation-check likely means
+  those 13 jobs were wasted CI minutes. Two ways to actually express that
+  dependency, both with a real cost:
+  - `workflow_run` (what `link-check` already uses) — but `workflow_run`
+    triggers **don't run on pull requests**, only after a push lands on
+    `master`. Applying it here would mean OS-check/legacy-R-check stop
+    validating PRs *before* merge, which is their whole point.
+  - Merge all three into one workflow file with job-level `needs:` (the only
+    way `needs:` works — it's job-to-job within a single file, not
+    cross-file) — preserves PR-time gating, but is a bigger refactor and
+    breaks the Course Integrity badges, which link to each workflow file's
+    own badge URL individually.
 
 ---
 
